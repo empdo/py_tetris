@@ -52,7 +52,8 @@ class Block:
         return _position
 
     def rotate_pos(self):
-        old_pos = self.position
+        _position = []
+        _rotation = self.rotation
 
         #get rotation point
         for position in self.position:
@@ -60,23 +61,24 @@ class Block:
                 rotation_point = position
 
         #clear positions and add one to the rotation
-        self.position = []
-        self.position.append(rotation_point)
-        self.rotation = (self.rotation + 1) % len(self.block_type["shapes"])
+        _position.append(rotation_point)
+        _rotation = (self.rotation + 1) % len(self.block_type["shapes"])
 
         #set varje block till diffrensen i position från rotation point + rotaion point eller något jag behöver mer hjärnceller
         for i, _i in enumerate(self.block_type["shapes"][self.rotation]):
             for j, _j in enumerate(_i):
                 if _j != "." and _j != "1":
-                    self.position.append([rotation_point[0] - (2 - i), rotation_point[1] - (2 - j), _j])
+                    _position.append([rotation_point[0] - (2 - i), rotation_point[1] - (2 - j), _j])
 
-    def can_rotate(self):
+        #self.can_rotate(_position)
+
+    def can_rotate(self, position):
         outside_diff = None
 
         #kolla om blocksen är i något annat block, är de det kolla om de går att flytta den så många block i skillnad mellan hur den var förut och nu
         #går det inte rotera inte, gör samma sak för kanterna
 
-        for i in self.position:
+        for i in position:
             if (i[1] < 0):
                if (outside_diff == None or i[1] < outside_diff): 
                    outside_diff = i[1]
