@@ -70,13 +70,15 @@ class Block:
                 if _j != "." and _j != "1":
                     _position.append([rotation_point[0] - (2 - i), rotation_point[1] - (2 - j), _j])
 
-        #self.can_rotate(_position)
+        if self.can_rotate(_position):
+            self.position = _position
+
 
     def can_rotate(self, position):
         outside_diff = None
 
-        #kolla om blocksen är i något annat block, är de det kolla om de går att flytta den så många block i skillnad mellan hur den var förut och nu
-        #går det inte rotera inte, gör samma sak för kanterna
+        #Returna false om de inte fungerar men med en diff på om blocket
+        #kan och behöver flytta sig åt sidan om den är utanför eller i ett annat block
 
         for i in position:
             if (i[1] < 0):
@@ -85,8 +87,6 @@ class Block:
             elif (i[1] > 10):
                 if (outside_diff == None or i[1] > outside_diff):
                     outside_diff = i[1]
-        for i in self.position:
-            i[1] += outside_diff
                
 
 #TODO: fixa småfel
