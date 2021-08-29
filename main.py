@@ -14,6 +14,7 @@ window = pyglet.window.Window(600, 600, "tetris")
 
 block_size = 32
 default_grid = [[(255, 229, 158) for x in range(11)] for x in range(17)]
+placed_blocks = []
 
 #shapes
 from shapes import *
@@ -22,7 +23,7 @@ from shapes import *
 blocks = {
     "S": {
         "shapes": S,
-        "color": (55, 55, 255)
+        "color": (245, 46, 32)
     },
     "I": {
         "shapes": I,
@@ -51,6 +52,8 @@ class Block:
         return _position
 
     def rotate_pos(self):
+        old_pos = self.position
+
         #get rotation point
         for position in self.position:
             if "1" in position:
@@ -67,6 +70,22 @@ class Block:
                 if _j != "." and _j != "1":
                     self.position.append([rotation_point[0] - (2 - i), rotation_point[1] - (2 - j), _j])
 
+    def can_rotate(self):
+        outside_diff = None
+
+        #kolla om blocksen är i något annat block, är de det kolla om de går att flytta den så många block i skillnad mellan hur den var förut och nu
+        #går det inte rotera inte, gör samma sak för kanterna
+
+        for i in self.position:
+            if (i[1] < 0):
+               if (outside_diff == None or i[1] < outside_diff): 
+                   outside_diff = i[1]
+            elif (i[1] > 10):
+                if (outside_diff == None or i[1] > outside_diff):
+                    outside_diff = i[1]
+        for i in self.position:
+            i[1] += outside_diff
+               
 
 #TODO: fixa småfel
 #TODO: veta om det är bra eller dåligt med tre miljarder funktioner
@@ -74,10 +93,12 @@ class Block:
 class Board:
     def __init__(self):
         self.grid = default_grid
-        self.current_block = Block("S", (55, 55, 255))
+        self.current_block = None
         self.placed_blocks = []
         self.blocks = []
         self.queue = []
+        self.spawn_block()
+
 
     #draws the board from grid 🤯
     def draw_board(self):
@@ -90,14 +111,23 @@ class Board:
 
     #makes a blank board, sets the current block then the placed blocks
     def update_board(self):
-        self.grid = copy.deepcopy(default_grid) #TODO: borde vara default_grid #TODO: borde vara default_grid
-        for i in self.current_block.position:
-            self.grid[i[0]][i[1]] = self.current_block.color
+        if self.current_block:
+            self.grid = copy.deepcopy(default_grid) #TODO: borde vara default_grid #TODO: borde vara default_grid
+            for i in self.current_block.position:
+                self.grid[i[0]][i[1]] = self.current_block.color
+            for i in placed_blocks:
+                self.grid[i[0]][i[1]] = i[2]
 
         self.draw_board()
 
     #spawn block, will probably do more
     def spawn_block(self):
+        if (len(self.queue) <= 1):
+            self.create_bundle()
+
+        self.current_block = Block(self.queue[0][0], self.queue[0][1])
+        self.queue.pop(0)
+
         self.update_board()        
 
     def block_down(self):
@@ -106,6 +136,10 @@ class Board:
         if self.can_move(-1, 0):
             for i in positions:
                 i[0] -= 1
+        else:
+            for i in positions:
+                placed_blocks.append([i[0],i[1], self.current_block.color])
+            self.spawn_block()
 
         self.update_board() 
 
@@ -125,9 +159,11 @@ class Board:
             x = i[0] + delta_x
             y = i[1] + delta_y
 
-            print(y)
             if x < 0 or y < 0 or y > 10:
                 return False
+            for i in placed_blocks:
+                if i[0] == x and i[1] == y:
+                    return False
 
         return True
 
@@ -136,7 +172,10 @@ class Board:
 
     #creates a bundle then adds it to queue
     def create_bundle(self):
-        pass
+        #scramble _blocks
+        for i in blocks:
+           self.queue.append([str(i), blocks[i]["color"]])
+
 
     def rotate():
         pass
@@ -156,12 +195,11 @@ def on_key_press(symbol, modifiers):
 @window.event
 def on_draw():
     window.clear()
-    board.spawn_block()
-    board.create_bundle()
-
+    board.update_board()
 
 def update_frames(var):
-    board.block_down()
+    if board.current_block != None:
+        board.block_down()
 
     if(len(board.queue) <= 2):
         board.create_bundle()
