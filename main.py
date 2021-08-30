@@ -16,7 +16,6 @@ window = pyglet.window.Window(600, 600, "tetris")
 block_size = 32
 bg_color = (16, 0, 20)
 default_grid = [[ bg_color for x in range(10)] for x in range(16)]
-print(len(default_grid), len(default_grid[0]))
 placed_blocks = []
 drop_time = 0.7
 
@@ -164,18 +163,18 @@ class Board:
         for n in range(0, 16):
             count = 0
             for i, _i in enumerate(placed_blocks):
-                if j[0] == n:
+                if _i[0] == n:
                     count += 1
                 if count == 10:
-                    self.clear_line(i)
+                    self.clear_line(_i[0])
 
 
     def clear_line(self, line):
-        print(line)
-
         for i, _i in enumerate(placed_blocks):
             if _i[0] == line:
-                removed_block = placed_blocks.pop(i)
+                print(placed_blocks)
+                print("asdasdasdasdasd")
+                print(placed_blocks.pop(i))
             elif _i[0] > line:
                 placed_blocks[i][0] -= 1
 
