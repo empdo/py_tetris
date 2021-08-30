@@ -161,10 +161,10 @@ class Board:
     def check_lines(self):
         count = 0
 
-        for i, _i in enumerate(self.grid):
+        for n in range(0, 16):
             count = 0
-            for j in _i:
-                if j != bg_color:
+            for i, _i in enumerate(placed_blocks):
+                if j[0] == n:
                     count += 1
                 if count == 10:
                     self.clear_line(i)
