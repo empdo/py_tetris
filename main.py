@@ -14,7 +14,9 @@ window = pyglet.window.Window(600, 600, "tetris")
 
 
 block_size = 32
-default_grid = [[(255, 229, 158) for x in range(11)] for x in range(17)]
+bg_color = (16, 0, 20)
+default_grid = [[ bg_color for x in range(10)] for x in range(16)]
+print(len(default_grid), len(default_grid[0]))
 placed_blocks = []
 drop_time = 0.7
 
@@ -24,29 +26,33 @@ drop_time = 0.7
 blocks = {
     "I": {
         "shapes": I,
-        "color": (55, 55, 255)
+        "color": (0, 255, 255)
     },
     "S": {
         "shapes": S,
-        "color": (114, 203, 59)
+        "color": (0, 255, 0)
     },
     "L":
         {
             "shapes": L,
-            "color": (255, 151, 28)
+            "color": (255, 127, 0)
     },
     "J": {
         "shapes": J,
-        "color":  (3, 65, 174)
+        "color": (0, 0, 255)
     },
     "Z": {
         "shapes": Z,
-        "color": (114, 203, 59)
+        "color": (255, 0, 0)
     },
     "T": {
         "shapes": T,
-        "color": (3, 65, 174)
+        "color": (128, 0, 128)
     },
+    "O": {
+        "shapes": O,
+        "color": (255, 255, 0)
+    }
 }
 
 
@@ -132,7 +138,6 @@ class Board:
         self.spawn_block()
 
     # draws the board from grid 🤯
-
     def draw_board(self):
         for i, _i in enumerate(self.grid):
             for j, _j in enumerate(self.grid[i]):
@@ -143,6 +148,7 @@ class Board:
 
     # makes a blank board, sets the current block then the placed blocks
     def update_board(self):
+
         if self.current_block:
             self.grid = copy.deepcopy(default_grid)
             for i in self.current_block.position:
@@ -151,6 +157,27 @@ class Board:
                 self.grid[i[0]][i[1]] = i[2]
 
         self.draw_board()
+    
+    def check_lines(self):
+        count = 0
+
+        for i, _i in enumerate(self.grid):
+            count = 0
+            for j in _i:
+                if j != bg_color:
+                    count += 1
+                if count == 10:
+                    self.clear_line(i)
+
+
+    def clear_line(self, line):
+        print(line)
+
+        for i, _i in enumerate(placed_blocks):
+            if _i[0] == line:
+                removed_block = placed_blocks.pop(i)
+            elif _i[0] > line:
+                placed_blocks[i][0] -= 1
 
     # spawn block, will probably do more
     def spawn_block(self):
@@ -159,6 +186,7 @@ class Board:
 
         self.current_block = Block(self.queue[0][0], self.queue[0][1])
         self.queue.pop(0)
+
 
         self.update_board()
 
@@ -174,6 +202,7 @@ class Board:
             self.spawn_block()
 
         self.update_board()
+        self.check_lines()
 
     # TODO: change name
     def block_side(self, change):
@@ -190,7 +219,7 @@ class Board:
             x = i[0] + delta_x
             y = i[1] + delta_y
 
-            if x < 0 or y < 0 or y > 10:
+            if x < 0 or y < 0 or y > 9:
                 return False
             for i in placed_blocks:
                 if i[0] == x and i[1] == y:
@@ -204,8 +233,16 @@ class Board:
     # creates a bundle then adds it to queue
     def create_bundle(self):
         # scramble _blocks
+        _blocks = []        
+
         for i in blocks:
-            self.queue.append([str(i), blocks[i]["color"]])
+            _blocks.append([str(i), blocks[i]["color"]])
+        
+        random.shuffle(_blocks)
+
+        for i in _blocks:
+            self.queue.append(i)
+
 
     def rotate():
         pass
