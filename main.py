@@ -15,7 +15,7 @@ window = pyglet.window.Window(600, 600, "tetris")
 
 block_size = 32
 bg_color = (16, 0, 20)
-default_grid = [[ bg_color for x in range(10)] for x in range(16)]
+default_grid = [[bg_color for x in range(10)] for x in range(16)]
 placed_blocks = []
 drop_time = 0.7
 
@@ -89,11 +89,11 @@ class Block:
         # set varje block till diffrensen i position från rotation point + rotaion point eller något jag behöver mer hjärnceller
         for i, _i in enumerate(self.block_type["shapes"][_rotation]):
             for j, _j in enumerate(_i):
-                if _j != "." and _j != "1":
+                if _j not in [".", "1"]:
                     _position.append(
                         [rotation_point[0] - (2 - i), rotation_point[1] - (2 - j), _j])
 
-        can_rotate = self.can_rotate(_position, _rotation)
+        can_rotate = self.can_rotate(_position, rotation_point)
         if can_rotate[0] or can_rotate[1] != 0:
             for i in _position:
                 i[1] += can_rotate[1]
@@ -102,23 +102,33 @@ class Block:
 
     def can_rotate(self, position, rotation_point):
         blocks_outside = 0
-        blocks_in_blocks = 0
+        blocks_in_rigth = 0
+        blocks_in_left = 0
 
         # Returna false om de inte fungerar men med en diff på om blocket \
         # kan och behöver flytta sig åt sidan om den är utanför eller i ett annat block
 
-        for i in position:
-            if (i[1] < 0):
+        for block_position in position:
+            if (block_position[1] < 0):
                 blocks_outside += 1
-            elif (i[1] > 10):
+            elif (block_position[1] > 10):
                 blocks_outside -= 1
 
-        for i in position:
-            for j in placed_blocks:
-                if ((i[0], i[1] + blocks_outside) == (j[0], j[1])):
-                    return(False, 0)
+        for block_position in position:
+            for placed_block_position in placed_blocks:
+                if ((block_position[0], block_position[1] + blocks_outside) == (placed_block_position[0], placed_block_position[1])):
+                    if(block_position[1] > rotation_point[1]):
+                        blocks_in_rigth += 1
+                    else:
+                        blocks_in_left += 1
 
-        if blocks_outside != 0:
+        if (blocks_in_left != 0 and blocks_in_rigth != 0):
+            return([False, 0])
+        elif (blocks_in_left != 0):
+            return([False, blocks_in_left])
+        elif (blocks_in_rigth != 0):
+            return([False, -blocks_in_rigth])
+        elif blocks_outside != 0:
             return([False, blocks_outside])
         else:
             return([True, 0])
@@ -156,11 +166,11 @@ class Board:
                 self.grid[i[0]][i[1]] = i[2]
 
         self.draw_board()
-    
+
     def check_lines(self):
         count = 0
 
-        for n in range(0, 16):
+        for n in range(16):
             count = 0
             for i, _i in enumerate(placed_blocks):
                 if _i[0] == n:
@@ -168,24 +178,24 @@ class Board:
                 if count == 10:
                     self.clear_line(_i[0])
 
-
     def clear_line(self, line):
-        for i, _i in enumerate(placed_blocks):
-            if _i[0] == line:
-                print(placed_blocks)
-                print("asdasdasdasdasd")
-                print(placed_blocks.pop(i))
-            elif _i[0] > line:
-                placed_blocks[i][0] -= 1
+        pass
+        #        print(placed_blocks)
+        #        for i, _i in enumerate(placed_blocks):
+        #            if _i[0] == line:
+        #                placed_blocks.remove(_i)
+        #
+       # for i, _i in enumerate(placed_blocks):
+       #         if _i[0] > line:
+       #             placed_blocks[i][0] -= 1
 
-    # spawn block, will probably do more
+        # spawn block, will probably do more
     def spawn_block(self):
         if (len(self.queue) <= 1):
             self.create_bundle()
 
         self.current_block = Block(self.queue[0][0], self.queue[0][1])
         self.queue.pop(0)
-
 
         self.update_board()
 
@@ -232,16 +242,12 @@ class Board:
     # creates a bundle then adds it to queue
     def create_bundle(self):
         # scramble _blocks
-        _blocks = []        
+        _blocks = [[str(i), blocks[i]["color"]] for i in blocks]
 
-        for i in blocks:
-            _blocks.append([str(i), blocks[i]["color"]])
-        
         random.shuffle(_blocks)
 
         for i in _blocks:
             self.queue.append(i)
-
 
     def rotate():
         pass
