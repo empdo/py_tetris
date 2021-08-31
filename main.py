@@ -15,7 +15,10 @@ window = pyglet.window.Window(600, 600, "tetris")
 
 block_size = 32
 bg_color = (16, 0, 20)
-default_grid = [[bg_color for x in range(10)] for x in range(16)]
+
+width, heigth = 10, 20
+
+default_grid = [[bg_color for x in range(width +1)] for x in range(heigth +1)]
 placed_blocks = []
 drop_time = 0.7
 
@@ -29,7 +32,7 @@ blocks = {
     },
     "S": {
         "shapes": S,
-        "color": (0, 255, 0)
+        "color": (255, 0, 0)
     },
     "L":
         {
@@ -42,7 +45,7 @@ blocks = {
     },
     "Z": {
         "shapes": Z,
-        "color": (255, 0, 0)
+        "color": (0, 255, 0)
     },
     "T": {
         "shapes": T,
@@ -69,7 +72,7 @@ class Block:
         for i, _i in enumerate(self.block_type["shapes"][0]):
             for j, _j in enumerate(_i):
                 if _j != ".":
-                    _position.append([16 - i, j, _j])
+                    _position.append([heigth - (i+2), j, _j])
 
         return _position
 
@@ -111,7 +114,7 @@ class Block:
         for block_position in position:
             if (block_position[1] < 0):
                 blocks_outside += 1
-            elif (block_position[1] > 10):
+            elif (block_position[1] > width -1):
                 blocks_outside -= 1
 
         for block_position in position:
@@ -151,7 +154,7 @@ class Board:
         for i, _i in enumerate(self.grid):
             for j, _j in enumerate(self.grid[i]):
                 self.blocks.append(shapes.Rectangle(
-                    j*block_size, i*block_size, block_size, block_size, color=(self.grid[i][j]), batch=batch))
+                    j*block_size, i*block_size, block_size -2, block_size -2, color=(self.grid[i][j]), batch=batch))
 
         batch.draw()
 
@@ -164,6 +167,7 @@ class Board:
                 self.grid[i[0]][i[1]] = self.current_block.color
             for i in placed_blocks:
                 self.grid[i[0]][i[1]] = i[2]
+
 
         self.draw_board()
 
@@ -178,6 +182,12 @@ class Board:
                 if count == 10:
                     self.clear_line(_i[0])
 
+    def lowest_block_point(self):
+        pass
+    def hard_drop_block(self):
+        while self.can_move(-1, 0):
+            self.block_down()
+
     def clear_line(self, line):
         pass
         #        print(placed_blocks)
@@ -190,6 +200,7 @@ class Board:
        #             placed_blocks[i][0] -= 1
 
         # spawn block, will probably do more
+
     def spawn_block(self):
         if (len(self.queue) <= 1):
             self.create_bundle()
@@ -200,7 +211,6 @@ class Board:
         self.update_board()
 
     def block_down(self):
-        # if new position not in placed_blocks
         positions = self.current_block.position
         if self.can_move(-1, 0):
             for i in positions:
@@ -211,7 +221,6 @@ class Board:
             self.spawn_block()
 
         self.update_board()
-        self.check_lines()
 
     # TODO: change name
     def block_side(self, change):
@@ -228,7 +237,7 @@ class Board:
             x = i[0] + delta_x
             y = i[1] + delta_y
 
-            if x < 0 or y < 0 or y > 9:
+            if x < 0 or y < 0 or y > width:
                 return False
             for i in placed_blocks:
                 if i[0] == x and i[1] == y:
@@ -264,6 +273,8 @@ def on_key_press(symbol, modifiers):
         board.block_side(1)
     elif symbol == key.UP:
         board.piece_rotate()
+    elif symbol == key.D:
+        board.hard_drop_block()
 
 
 @window.event
