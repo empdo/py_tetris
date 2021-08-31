@@ -110,11 +110,10 @@ class Block:
 
         # Returna false om de inte fungerar men med en diff på om blocket \
         # kan och behöver flytta sig åt sidan om den är utanför eller i ett annat block
-
         for block_position in position:
             if (block_position[1] < 0):
                 blocks_outside += 1
-            elif (block_position[1] > width -1):
+            elif (block_position[1] > width):
                 blocks_outside -= 1
 
         for block_position in position:
@@ -127,14 +126,16 @@ class Block:
 
         if (blocks_in_left != 0 and blocks_in_rigth != 0):
             return([False, 0])
-        elif (blocks_in_left != 0):
+        elif (blocks_in_left != 0 and blocks_outside == 0 ):
             return([False, blocks_in_left])
-        elif (blocks_in_rigth != 0):
+        elif (blocks_in_rigth != 0 and blocks_outside == 0):
             return([False, -blocks_in_rigth])
-        elif blocks_outside != 0:
+        elif blocks_outside != 0 and blocks_in_left == 0 and blocks_in_rigth == 0:
             return([False, blocks_outside])
-        else:
+        elif (blocks_outside == 0 and blocks_in_rigth == 0 and blocks_in_left == 0):
             return([True, 0])
+        else:
+            return([False, 0])
 
 
 # TODO: fixa småfel
