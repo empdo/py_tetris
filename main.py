@@ -99,8 +99,6 @@ class Block:
                     _position.append(
                         [rotation_point[0] + (2 - y), rotation_point[1] - (2 - x), column])
 
-                        #4,5 
-
         can_rotate = self.can_rotate(_position, rotation_point)
         if can_rotate[0] or can_rotate[1] != 0:
             for i in _position:
