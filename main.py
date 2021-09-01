@@ -10,13 +10,13 @@ from pyglet.gl import *
 
 batch = pyglet.graphics.Batch()
 background = pyglet.graphics.OrderedGroup(0)
-window = pyglet.window.Window(600, 600, "tetris")
+window = pyglet.window.Window(320, 600, "tetris")
 
 
 block_size = 32
-bg_color = (16, 0, 20)
+bg_color = (91, 0, 110)
 
-width, heigth = 10, 20
+width, heigth = 9, 20
 
 default_grid = [[bg_color for x in range(width +1)] for x in range(heigth +1)]
 placed_blocks = []
@@ -164,6 +164,7 @@ class Board:
 
         if self.current_block:
             self.grid = copy.deepcopy(default_grid)
+            self.lowest_block_position()
             for i in self.current_block.position:
                 self.grid[i[0]][i[1]] = self.current_block.color
             for i in placed_blocks:
@@ -183,8 +184,19 @@ class Board:
                 if count == 10:
                     self.clear_line(_i[0])
 
-    def lowest_block_point(self):
-        pass
+    def lowest_block_position(self):
+        block_positions = self.current_block.position
+
+        i = 0
+        while self.can_move(i, 0):
+                i -= 1
+
+        print(i)
+
+        for position in block_positions:
+            self.grid[position[0] + i + 1][position[1]] = (138, 138, 138)
+
+
     def hard_drop_block(self):
         while self.can_move(-1, 0):
             self.block_down()
