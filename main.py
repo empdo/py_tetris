@@ -22,7 +22,8 @@ width, heigth = 9, 20
 
 default_grid = [[bg_color for x in range(
     width + 1)] for x in range(heigth + 1)]
-placed_blocks = []
+
+placed_blocks = [[None for x in range(width + 1)] for x in range(heigth +1)]
 
 drop_time = 0.7
 
@@ -122,12 +123,11 @@ class Block:
                 blocks_outside -= 1
 
         for block_position in position:
-            for placed_block_position in placed_blocks:
-                if ((block_position[0], block_position[1] + blocks_outside) == (placed_block_position[0], placed_block_position[1])):
-                    if(block_position[1] > rotation_point[1]):
-                        blocks_in_rigth += 1
-                    else:
-                        blocks_in_left += 1
+            if placed_blocks[block_position[0]][block_position[1] + blocks_outside] != None:
+                if(block_position[1] > rotation_point[1]):
+                    blocks_in_rigth += 1
+                else:
+                    blocks_in_left += 1
 
         diff_to_return = 0
         if (blocks_in_left != 0 and blocks_in_rigth == 0 and blocks_outside == 0):
@@ -170,8 +170,11 @@ class Board:
             self.lowest_block_position()
             for i in self.current_block.position:
                 self.grid[i[0]][i[1]] = self.current_block.color
-            for i in placed_blocks:
-                self.grid[i[0]][i[1]] = i[2]
+
+            for x, row in enumerate(placed_blocks):
+                for y, column in enumerate(row):
+                        if column != None:
+                            self.grid[x][y] = column
 
         self.draw_board()
 
@@ -190,7 +193,19 @@ class Board:
         while self.can_move(-1, 0):
             self.block_down()
 
+    def check_lines(self):
+        for x, row in enumerate(placed_blocks):
+            count = 0
+            for y, column in enumerate(row):
+                if column != None:
+                    print(column)
+                    count += 1
+                if count == 10:
+                    self.clear_line(x) 
 
+    def clear_line(self, line):
+        placed_blocks.pop(line)
+        placed_blocks.insert(16, [None for x in range(width + 1)])
 
     def spawn_block(self):
         if (len(self.queue) <= 1):
@@ -208,7 +223,9 @@ class Board:
                 i[0] -= 1
         else:
             for i in positions:
-                placed_blocks.append([i[0], i[1], self.current_block.color])
+                placed_blocks[i[0]][i[1]] = self.current_block.color
+                
+            self.check_lines()
             self.spawn_block()
 
         self.update_board()
@@ -230,9 +247,9 @@ class Board:
 
             if x < 0 or y < 0 or y > width:
                 return False
-            for i in placed_blocks:
-                if i[0] == x and i[1] == y:
-                    return False
+
+            if placed_blocks[x][y] != None:
+                return False
 
         return True
 
