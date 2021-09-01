@@ -90,14 +90,16 @@ class Block:
 
         # clear positions and add one to the rotation
         _position.append(rotation_point)
-        _rotation = (self.rotation + 1) % len(self.block_type["shapes"])
+        _rotation = (self.rotation + 1) % len(self.block_type["shapes"]) 
 
         # set varje block till diffrensen i position från rotation point + rotaion point eller något jag behöver mer hjärnceller
-        for i, _i in enumerate(self.block_type["shapes"][_rotation]):
-            for j, _j in enumerate(_i):
-                if _j not in [".", "1"]:
+        for y, row in enumerate(self.block_type["shapes"][_rotation]):
+            for x, column in enumerate(row):
+                if column not in [".", "1"]:
                     _position.append(
-                        [rotation_point[0] - (2 - i), rotation_point[1] - (2 - j), _j])
+                        [rotation_point[0] + (2 - y), rotation_point[1] - (2 - x), column])
+
+                        #4,5 
 
         can_rotate = self.can_rotate(_position, rotation_point)
         if can_rotate[0] or can_rotate[1] != 0:
@@ -105,6 +107,7 @@ class Block:
                 i[1] += can_rotate[1]
             self.position = _position
             self.rotation = _rotation
+
 
     def can_rotate(self, position, rotation_point):
         blocks_outside = 0
@@ -138,7 +141,6 @@ class Block:
             return([True, 0])
 
         return([False, diff_to_return])
-
 
 # TODO: fixa småfel
 # TODO: veta om det är bra eller dåligt med tre miljarder funktioner
