@@ -2,6 +2,7 @@ from shapes import *
 import pyglet
 import copy
 import random
+from pprint import pprint
 
 from pyglet import shapes
 from pyglet.window import key
@@ -157,7 +158,7 @@ class Board:
         for i, _i in enumerate(self.grid):
             for j, _j in enumerate(self.grid[i]):
                 self.blocks.append(shapes.Rectangle(
-                    j*block_size, i*block_size, block_size - 2, block_size - 2, color=(self.grid[i][j]), batch=batch))
+                    2 + j*block_size, 2 + i*block_size, block_size - 2, block_size - 2, color=(self.grid[i][j]), batch=batch))
 
         batch.draw()
 
@@ -174,16 +175,6 @@ class Board:
 
         self.draw_board()
 
-    def check_lines(self):
-        count = 0
-
-        for n in range(16):
-            count = 0
-            for i, _i in enumerate(placed_blocks):
-                if _i[0] == n:
-                    count += 1
-                if count == 10:
-                    self.clear_line(_i[0])
 
     def lowest_block_position(self):
         block_positions = self.current_block.position
@@ -199,18 +190,7 @@ class Board:
         while self.can_move(-1, 0):
             self.block_down()
 
-    def clear_line(self, line):
-        pass
-        #        print(placed_blocks)
-        #        for i, _i in enumerate(placed_blocks):
-        #            if _i[0] == line:
-        #                placed_blocks.remove(_i)
-        #
-       # for i, _i in enumerate(placed_blocks):
-       #         if _i[0] > line:
-       #             placed_blocks[i][0] -= 1
 
-        # spawn block, will probably do more
 
     def spawn_block(self):
         if (len(self.queue) <= 1):
