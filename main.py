@@ -14,12 +14,15 @@ window = pyglet.window.Window(320, 600, "tetris")
 
 
 block_size = 32
-bg_color = (91, 0, 110)
+bg_color = (40, 0, 41)
+ghost_block_color = (63, 46, 64)
 
 width, heigth = 9, 20
 
-default_grid = [[bg_color for x in range(width +1)] for x in range(heigth +1)]
+default_grid = [[bg_color for x in range(
+    width + 1)] for x in range(heigth + 1)]
 placed_blocks = []
+
 drop_time = 0.7
 
 # shapes
@@ -124,18 +127,17 @@ class Block:
                     else:
                         blocks_in_left += 1
 
-        if (blocks_in_left != 0 and blocks_in_rigth != 0):
-            return([False, 0])
-        elif (blocks_in_left != 0 and blocks_outside == 0 ):
-            return([False, blocks_in_left])
-        elif (blocks_in_rigth != 0 and blocks_outside == 0):
-            return([False, -blocks_in_rigth])
+        diff_to_return = 0
+        if (blocks_in_left != 0 and blocks_in_rigth == 0 and blocks_outside == 0):
+            diff_to_return = blocks_in_left
+        elif (blocks_in_rigth != 0 and blocks_in_left == 0 and blocks_outside == 0):
+            diff_to_return = -blocks_in_rigth
         elif blocks_outside != 0 and blocks_in_left == 0 and blocks_in_rigth == 0:
-            return([False, blocks_outside])
-        elif (blocks_outside == 0 and blocks_in_rigth == 0 and blocks_in_left == 0):
+            diff_to_return = blocks_outside
+        elif blocks_outside == 0 and blocks_in_rigth == 0:
             return([True, 0])
-        else:
-            return([False, 0])
+
+        return([False, diff_to_return])
 
 
 # TODO: fixa småfel
@@ -155,7 +157,7 @@ class Board:
         for i, _i in enumerate(self.grid):
             for j, _j in enumerate(self.grid[i]):
                 self.blocks.append(shapes.Rectangle(
-                    j*block_size, i*block_size, block_size -2, block_size -2, color=(self.grid[i][j]), batch=batch))
+                    j*block_size, i*block_size, block_size - 2, block_size - 2, color=(self.grid[i][j]), batch=batch))
 
         batch.draw()
 
@@ -169,7 +171,6 @@ class Board:
                 self.grid[i[0]][i[1]] = self.current_block.color
             for i in placed_blocks:
                 self.grid[i[0]][i[1]] = i[2]
-
 
         self.draw_board()
 
@@ -189,13 +190,10 @@ class Board:
 
         i = 0
         while self.can_move(i, 0):
-                i -= 1
-
-        print(i)
+            i -= 1
 
         for position in block_positions:
-            self.grid[position[0] + i + 1][position[1]] = (138, 138, 138)
-
+            self.grid[position[0] + i + 1][position[1]] = ghost_block_color
 
     def hard_drop_block(self):
         while self.can_move(-1, 0):
@@ -280,14 +278,26 @@ board = Board()
 
 @window.event
 def on_key_press(symbol, modifiers):
+    global drop_time
+
     if symbol == key.LEFT:
         board.block_side(-1)
     elif symbol == key.RIGHT:
         board.block_side(1)
     elif symbol == key.UP:
         board.piece_rotate()
+    elif symbol == key.DOWN:
+        drop_time = 0.2
     elif symbol == key.D:
         board.hard_drop_block()
+
+
+@window.event
+def on_key_release(symbol, modifiers):
+    global drop_time
+
+    if symbol == key.DOWN:
+        drop_time = 0.7
 
 
 @window.event
