@@ -145,7 +145,7 @@ class Block:
             diff_to_return = -blocks_in_rigth
         elif blocks_outside != 0 and blocks_in_left == 0 and blocks_in_rigth == 0:
             diff_to_return = blocks_outside
-        elif blocks_outside == 0 and blocks_in_rigth == 0:
+        elif blocks_outside == 0 and blocks_in_rigth == 0 and blocks_in_left == 0:
             return([True, 0])
 
         return([False, diff_to_return])
