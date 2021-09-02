@@ -155,19 +155,24 @@ class Board:
 
     # draws the board from grid 🤯
     def draw_board(self):
-        for i, _i in enumerate(self.grid):
-            for j, _j in enumerate(self.grid[i]):
-                self.blocks.append(shapes.Rectangle(
-                    2 + j*block_size, 2 + i*block_size, block_size - 2, block_size - 2, color=(self.grid[i][j]), batch=batch))
+        for y, row in enumerate(self.grid):
+            for x, block_color in enumerate(row):
+                self.blocks.append(
+                    shapes.BorderedRectangle(
+                    2 + x*block_size, 2 + y*block_size, block_size - 2, block_size - 2, 4, div_vec(block_color, 2), block_color, batch=batch)
+                )
 
         batch.draw()
+    
 
     # makes a blank board, sets the current block then the placed blocks
     def update_board(self):
 
         if self.current_block:
             self.grid = copy.deepcopy(default_grid)
+            self.check_lines()
             self.lowest_block_position()
+
             for i in self.current_block.position:
                 self.grid[i[0]][i[1]] = self.current_block.color
 
@@ -198,7 +203,6 @@ class Board:
             count = 0
             for y, column in enumerate(row):
                 if column != None:
-                    print(column)
                     count += 1
                 if count == 10:
                     self.clear_line(x) 
@@ -225,7 +229,6 @@ class Board:
             for i in positions:
                 placed_blocks[i[0]][i[1]] = self.current_block.color
                 
-            self.check_lines()
             self.spawn_block()
 
         self.update_board()
@@ -268,6 +271,9 @@ class Board:
 
     def rotate():
         pass
+
+def div_vec(vec: tuple[int, ...], scalar: int):
+    return *map(lambda x: x // scalar, vec),
 
 
 board = Board()
