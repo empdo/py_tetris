@@ -197,6 +197,9 @@ class Board:
     def hard_drop_block(self):
         while self.can_move(-1, 0):
             self.block_down()
+        for block_position in self.current_block.position:
+            placed_blocks[block_position[0]][block_position[1]] = self.current_block.color
+
         self.spawn_block()
 
     def check_lines(self):
