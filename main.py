@@ -197,6 +197,7 @@ class Board:
     def hard_drop_block(self):
         while self.can_move(-1, 0):
             self.block_down()
+        self.spawn_block()
 
     def check_lines(self):
         for x, row in enumerate(placed_blocks):
