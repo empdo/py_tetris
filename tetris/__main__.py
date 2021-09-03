@@ -19,9 +19,9 @@ def on_key_press(symbol, modifiers):
     global drop_time
 
     if symbol == key.LEFT:
-        board.block_side(-1)
+        move_left(None)
     elif symbol == key.RIGHT:
-        board.block_side(1)
+        move_right(None)
     elif symbol == key.UP:
         board.piece_rotate()
     elif symbol == key.DOWN:
@@ -30,14 +30,27 @@ def on_key_press(symbol, modifiers):
         board.hard_drop_block()
     elif symbol == key.C:
         board.hold_block()
-
+    elif symbol == key.ESCAPE:
+        board.pause()
 
 @window.event
 def on_key_release(symbol, modifiers):
     global drop_time
-
     if symbol == key.DOWN:
         drop_time = 0.7
+    elif symbol == key.RIGHT:
+        pyglet.clock.unschedule(move_right)
+    elif symbol == key.LEFT:
+        pyglet.clock.unschedule(move_left)
+
+def move_right(var):
+    board.block_side(1)
+    pyglet.clock.schedule_once(move_right, 1/4)
+
+def move_left(var):
+    board.block_side(-1)
+    pyglet.clock.schedule_once(move_left, 1/4)
+
 
 
 @window.event
@@ -51,7 +64,7 @@ def on_draw():
     340, 420, 125, 100, 8,(41, 40, 40), div_vec((41, 40, 40), 2) ).draw()
     (pyglet.text.Label("NEXT",
             font_name='Open Sans',
-            font_size=22,
+            font_size=18,
             bold=True,
             x=402.5, y=540,
             color= (255, 255, 255, 255),
@@ -61,7 +74,7 @@ def on_draw():
     340, 250, 125, 100, 8,(41, 40, 40), div_vec((41, 40, 40), 2) ).draw()
     (pyglet.text.Label("HOLD",
             font_name='Open Sans',
-            font_size=22,
+            font_size=18,
             bold=True,
             x= 402.5, y=370,
             color= (255, 255, 255, 255),
