@@ -68,7 +68,7 @@ class Holder:
                 if column != ".":
                     self.blocks.append(
                         pyglet.shapes.BorderedRectangle(
-                        block_size*width + ui_offset + x*block_size, block_size*width + ui_offset + y*block_size, block_size - 2, block_size - 2, 4, div_vec(self.color, 2), self.color, batch=batch)
+                        15 + x*block_size, ui_offset + 275 + y*block_size, block_size - 2, block_size - 2, 4, div_vec(self.color, 2), self.color, batch=batch)
                     )
 
 
@@ -173,7 +173,7 @@ class Board:
             for x, block_color in enumerate(row):
                 self.blocks.append(
                     pyglet.shapes.BorderedRectangle(
-                    2 + x*block_size, 2 + y*block_size, block_size - 2, block_size - 2, 4, div_vec(block_color, 2), block_color, batch=batch)
+                    150 + 2 + x*block_size, 2 + y*block_size, block_size - 2, block_size - 2, 4, div_vec(block_color, 2), block_color, batch=batch)
                 )
 
         batch.draw()

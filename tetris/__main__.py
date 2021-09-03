@@ -6,7 +6,7 @@ from pyglet.gl import *
 from .import Board
 
 background = pyglet.graphics.OrderedGroup(0)
-window = pyglet.window.Window(500, 600, "tetris")
+window = pyglet.window.Window(600, 600, "tetris")
 
 drop_time = 0.7
 
@@ -52,7 +52,7 @@ def on_draw():
             font_name='Source Code Pro',
             font_size=24,
             bold=True,
-            x=400, y=500,
+            x=75, y=500,
             color= (255, 255, 255, 200),
             anchor_x='center', anchor_y='center')).draw()
 
