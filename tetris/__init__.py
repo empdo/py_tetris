@@ -10,20 +10,22 @@ import pyglet.text
 
 batch = Batch()
 
-#VARIABLES
+# VARIABLES
 block_size = 32
 ui_offset = 50
 bg_color = (40, 0, 41)
 ghost_block_color = (63, 46, 64)
+
+score = 0
 
 width, heigth = 9, 20
 
 default_grid = [[bg_color for x in range(
     width + 1)] for x in range(heigth + 1)]
 
-placed_blocks = [[None for x in range(width + 1)] for x in range(heigth +1)]
+placed_blocks = [[None for x in range(width + 1)] for x in range(heigth + 1)]
 
-#BLOCKS
+# BLOCKS
 blocks = {
     "I": {
         "shapes": I,
@@ -56,6 +58,7 @@ blocks = {
     }
 }
 
+
 class Holder:
     def __init__(self, block, color):
         self.block = block["shapes"][0]
@@ -66,15 +69,16 @@ class Holder:
     def draw_holder(self):
         offset = 323
         if self.color == (0, 255, 255):
-            offset -= block_size -15
+            offset -= block_size - 15
 
         for x, row in enumerate(self.block):
             for y, column in enumerate(row):
                 if column != ".":
                     self.blocks.append(
                         pyglet.shapes.BorderedRectangle(
-                        offset + 17 + x*(block_size -6), ui_offset + 183 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
+                            offset + 17 + x*(block_size - 6), ui_offset + 183 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
                     )
+
 
 class Next:
     def __init__(self, block, color):
@@ -86,15 +90,16 @@ class Next:
     def draw_holder(self):
         offset = 323
         if self.color == (0, 255, 255):
-            offset -= block_size -15
+            offset -= block_size - 15
 
         for x, row in enumerate(self.block):
             for y, column in enumerate(row):
                 if column != ".":
                     self.blocks.append(
                         pyglet.shapes.BorderedRectangle(
-                        offset + 17 + x*(block_size -6), ui_offset + 356 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
+                            offset + 17 + x*(block_size - 6), ui_offset + 356 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
                     )
+
 
 class Block:
     def __init__(self, block_type, color):
@@ -125,7 +130,7 @@ class Block:
 
         # clear positions and add one to the rotation
         _position.append(rotation_point)
-        _rotation = (self.rotation + 1) % len(self.block_type["shapes"]) 
+        _rotation = (self.rotation + 1) % len(self.block_type["shapes"])
 
         # set varje block till diffrensen i position från rotation point + rotaion point eller något jag behöver mer hjärnceller
         for y, row in enumerate(self.block_type["shapes"][_rotation]):
@@ -134,8 +139,8 @@ class Block:
                     _position.append(
                         [rotation_point[0] + (2 - y), rotation_point[1] - (2 - x), column])
 
-        #kolla om man kan rotera
-        #om man är utanför 
+        # kolla om man kan rotera
+        # om man är utanför
         #
 
         can_rotate = self.can_rotate(_position, rotation_point)
@@ -144,7 +149,6 @@ class Block:
                 i[1] += can_rotate[1]
             self.position = _position
             self.rotation = _rotation
-
 
     def can_rotate(self, position, rotation_point):
         blocks_outside = 0
@@ -173,15 +177,16 @@ class Block:
             diff_to_return = -blocks_in_rigth
         elif blocks_outside != 0 and blocks_in_left == 0 and blocks_in_rigth == 0:
             diff_to_return = blocks_outside
-        elif blocks_outside == 0 and blocks_in_rigth == 0 and blocks_in_left == 0:
-            return([True, 0])
 
         for pos in position:
-            if pos[1] + diff_to_return < 0 or pos[1] + diff_to_return > width or placed_blocks[pos[0]][pos[1] + diff_to_return] != None:
+            if pos[0] < 0 or pos[1] + diff_to_return < 0 or pos[1] + diff_to_return > width or placed_blocks[pos[0]][pos[1] + diff_to_return] != None:
                 return[False, 0]
 
+        if blocks_outside == 0 and blocks_in_rigth == 0 and blocks_in_left == 0:
+            return([True, 0])
+
         return([False, diff_to_return])
-        
+
 
 # TODO: fixa småfel
 # TODO: veta om det är bra eller dåligt med tre miljarder funktioner
@@ -214,16 +219,15 @@ class Board:
 
         for position in self.current_block.position:
             self.create_shape(position, self.current_block.color)
-            
 
         batch.draw()
 
     def create_shape(self, position, color):
         self.blocks.append(
             pyglet.shapes.BorderedRectangle(
-            2 + position[1]*block_size, 2 + position[0]*block_size, block_size - 2, block_size - 2, 4, div_vec(color, 2), color, batch=batch)
+                2 + position[1]*block_size, 2 + position[0]*block_size, block_size - 2, block_size - 2, 4, div_vec(color, 2), color, batch=batch)
         )
-    
+
     # makes a blank board, sets the current block then the placed blocks
     def update_board(self):
         if self.current_block:
@@ -244,14 +248,15 @@ class Board:
         while self.can_move(-1, 0):
             self.block_down()
         for block_position in self.current_block.position:
-            placed_blocks[block_position[0]][block_position[1]] = self.current_block.color
+            placed_blocks[block_position[0]][block_position[1]
+                                             ] = self.current_block.color
 
         self.spawn_block()
 
     def check_lines(self):
         for x, row in enumerate(placed_blocks):
             if all(row):
-                self.clear_line(x) 
+                self.clear_line(x)
 
     def clear_line(self, line):
         placed_blocks.pop(line)
@@ -303,22 +308,22 @@ class Board:
 
     def hold_block(self):
         _current_block = self.current_block
-        self.holder = Holder(self.current_block.block_type, self.current_block.color)
+        self.holder = Holder(self.current_block.block_type,
+                             self.current_block.color)
 
         if self.stashed_block is None:
             self.spawn_block()
         else:
             self.current_block = self.stashed_block
-            self.current_block.position =  self.current_block.default_pos()
+            self.current_block.position = self.current_block.default_pos()
 
         self.stashed_block = _current_block
         self.update_board()
 
-
         self.holder.draw_holder()
 
-
     # creates a bundle then adds it to queue
+
     def create_bundle(self):
         # scramble _blocks
         _blocks = [[str(i), blocks[i]["color"]] for i in blocks]
@@ -330,6 +335,7 @@ class Board:
 
     def rotate():
         pass
+
 
 def div_vec(vec: tuple[int, ...], scalar: int):
     return *map(lambda x: x // scalar, vec),

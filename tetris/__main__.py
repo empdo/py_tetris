@@ -3,10 +3,10 @@ import pyglet
 from pyglet.window import key
 from pyglet.gl import *
 
-from .import Board, placed_blocks
+from .import Board, placed_blocks, score
 
 background = pyglet.graphics.OrderedGroup(0)
-window = pyglet.window.Window(480, 600, "tetris")
+window = pyglet.window.Window(485, 600, "tetris")
 
 drop_time = 0.7
 
@@ -60,26 +60,31 @@ def on_draw():
     #colors = [(235, 64, 52, 200), (235, 223, 52, 205), (52, 235, 58, 205), (38, 60, 255, 205), (215, 38, 255, 205)]
 
     #for index, letter in enumerate("HOLD"):
+
+    text_options = {"font_name": 'Open Sans', "font_size":18, "color":(255, 255, 255, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
+
     pyglet.shapes.BorderedRectangle(
     340, 420, 125, 100, 8,(41, 40, 40), div_vec((41, 40, 40), 2) ).draw()
+
     (pyglet.text.Label("NEXT",
-            font_name='Open Sans',
-            font_size=18,
-            bold=True,
             x=402.5, y=540,
-            color= (255, 255, 255, 255),
-            anchor_x='center', anchor_y='center')).draw()
+            **text_options        
+            )).draw()
 
     pyglet.shapes.BorderedRectangle(
     340, 250, 125, 100, 8,(41, 40, 40), div_vec((41, 40, 40), 2) ).draw()
     (pyglet.text.Label("HOLD",
-            font_name='Open Sans',
-            font_size=18,
-            bold=True,
-            x= 402.5, y=370,
-            color= (255, 255, 255, 255),
-            anchor_x='center', anchor_y='center')).draw()
+            **text_options,
+            x= 402.5, y=370)).draw()
     
+    (pyglet.text.Label("SCORE:",
+            **text_options,
+            x= 402.5, y=210)
+            ).draw()
+
+    (pyglet.text.Label(str(score),
+            x= 402.5, y=180
+    )).draw()
 
     board.update_board()
 
