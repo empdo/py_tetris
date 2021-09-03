@@ -181,7 +181,6 @@ class Block:
 
 class Board:
     def __init__(self):
-        self.grid = default_grid
         self.current_block = None
         self.placed_blocks = []
         self.blocks = []
@@ -194,11 +193,14 @@ class Board:
 
     # draws the board from grid 🤯
     def draw_board(self):
-        for y, row in enumerate(self.grid):
+        for y, row in enumerate(placed_blocks):
             for x, block_color in enumerate(row):
+                
+                color = block_color if block_color != None else bg_color
+
                 self.blocks.append(
                     pyglet.shapes.BorderedRectangle(
-                    2 + x*block_size, 2 + y*block_size, block_size - 2, block_size - 2, 4, div_vec(block_color, 2), block_color, batch=batch)
+                    2 + x*block_size, 2 + y*block_size, block_size - 2, block_size - 2, 4, div_vec(color, 2), color, batch=batch)
                 )
 
         batch.draw()
@@ -207,18 +209,8 @@ class Board:
     # makes a blank board, sets the current block then the placed blocks
     def update_board(self):
         if self.current_block:
-            self.grid = copy.deepcopy(default_grid)
-
             self.check_lines()
             self.lowest_block_position()
-
-            for i in self.current_block.position:
-                self.grid[i[0]][i[1]] = self.current_block.color
-
-            for x, row in enumerate(placed_blocks):
-                for y, column in enumerate(row):
-                        if column != None:
-                            self.grid[x][y] = column
 
         self.draw_board()
 
