@@ -25,7 +25,7 @@ def on_key_press(symbol, modifiers):
     elif symbol == key.UP:
         board.piece_rotate()
     elif symbol == key.DOWN:
-        drop_time = 0.2
+        drop_time = 0.05
     elif symbol == key.SPACE:
         board.hard_drop_block()
     elif symbol == key.C:
@@ -73,7 +73,6 @@ def on_draw():
 def div_vec(vec: tuple[int, ...], scalar: int):
     return *map(lambda x: x // scalar, vec),
 
-
 def update_frames(var):
     positions = board.current_block.position
     if (board.current_block != None):
@@ -83,12 +82,14 @@ def update_frames(var):
             for i in positions:
                 placed_blocks[i[0]][i[1]] = board.current_block.color
             board.spawn_block()
-
     if(len(board.queue) <= 2):
         board.create_bundle()
 
     board.update_board()
 
-pyglet.clock.schedule_interval(update_frames, drop_time)
+    pyglet.clock.schedule_once(update_frames, drop_time)
+
+
+update_frames("")
 
 pyglet.app.run()
