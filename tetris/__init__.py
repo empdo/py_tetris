@@ -176,9 +176,8 @@ class Block:
         elif blocks_outside == 0 and blocks_in_rigth == 0 and blocks_in_left == 0:
             return([True, 0])
 
-        
         for pos in position:
-            if diff_to_return > width or placed_blocks[pos[0]][pos[1] + diff_to_return] != None:
+            if pos[1] + diff_to_return > width or placed_blocks[pos[0]][pos[1] + diff_to_return] != None:
                 return[False, 0]
 
         return([False, diff_to_return])
