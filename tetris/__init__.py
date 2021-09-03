@@ -59,18 +59,42 @@ blocks = {
 class Holder:
     def __init__(self, block, color):
         self.block = block["shapes"][0]
+        self.block_name = block
         self.color = color
         self.blocks = []
 
     def draw_holder(self):
+        offset = 0
+        if self.color == (0, 255, 255):
+            offset -= block_size -15
+
         for x, row in enumerate(self.block):
             for y, column in enumerate(row):
                 if column != ".":
                     self.blocks.append(
                         pyglet.shapes.BorderedRectangle(
-                        15 + x*block_size, ui_offset + 275 + y*block_size, block_size - 2, block_size - 2, 4, div_vec(self.color, 2), self.color, batch=batch)
+                        offset + 17 + x*(block_size -6), ui_offset + 317 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
                     )
 
+class Next:
+    def __init__(self, block, color):
+        self.block = block["shapes"][0]
+        self.block_name = block
+        self.color = color
+        self.blocks = []
+
+    def draw_holder(self):
+        offset = 470
+        if self.color == (0, 255, 255):
+            offset -= block_size -15
+
+        for x, row in enumerate(self.block):
+            for y, column in enumerate(row):
+                if column != ".":
+                    self.blocks.append(
+                        pyglet.shapes.BorderedRectangle(
+                        offset + 17 + x*(block_size -6), ui_offset + 317 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
+                    )
 
 class Block:
     def __init__(self, block_type, color):
@@ -165,6 +189,7 @@ class Board:
         self.queue = []
         self.holder = None
         self.stashed_block = None
+        self.next = None
         self.spawn_block()
 
     # draws the board from grid 🤯
@@ -235,6 +260,9 @@ class Board:
 
         self.current_block = Block(self.queue[0][0], self.queue[0][1])
         self.queue.pop(0)
+
+        self.next = Next(blocks[self.queue[1][0]], self.queue[1][1])
+        self.next.draw_holder()
 
         self.update_board()
 
