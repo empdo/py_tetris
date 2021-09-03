@@ -175,13 +175,13 @@ class Block:
             diff_to_return = blocks_outside
         elif blocks_outside == 0 and blocks_in_rigth == 0 and blocks_in_left == 0:
             return([True, 0])
+
         
         for pos in position:
-            if placed_blocks[pos[0]][pos[1] + diff_to_return] == None:
-                break
-            return([False, diff_to_return])
+            if diff_to_return > width or placed_blocks[pos[0]][pos[1] + diff_to_return] != None:
+                return[False, 0]
 
-        return[False, 0]
+        return([False, diff_to_return])
         
 
 # TODO: fixa småfel
