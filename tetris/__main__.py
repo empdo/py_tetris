@@ -45,16 +45,16 @@ def on_draw():
     window.clear()
     board.update_board()
 
-    colors = [(235, 64, 52, 200), (235, 223, 52, 205), (52, 235, 58, 205), (38, 60, 255, 205), (215, 38, 255, 205)]
+    #colors = [(235, 64, 52, 200), (235, 223, 52, 205), (52, 235, 58, 205), (38, 60, 255, 205), (215, 38, 255, 205)]
 
-    for index, letter in enumerate("HOLD"):
-        (pyglet.text.Label(letter,
-                font_name='Source Code Pro',
-                font_size=24,
-                bold=True,
-                x=375 + index*24, y=500,
-                color= colors[index % len("hold")],
-                anchor_x='center', anchor_y='center')).draw()
+    #for index, letter in enumerate("HOLD"):
+    (pyglet.text.Label("HOLD",
+            font_name='Source Code Pro',
+            font_size=24,
+            bold=True,
+            x=400, y=500,
+            color= (255, 255, 255, 200),
+            anchor_x='center', anchor_y='center')).draw()
 
 
 

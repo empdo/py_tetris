@@ -138,6 +138,8 @@ class Block:
                 else:
                     blocks_in_left += 1
 
+        print(blocks_outside, blocks_in_left, blocks_in_rigth)
+
         diff_to_return = 0
         if (blocks_in_left != 0 and blocks_in_rigth == 0 and blocks_outside == 0):
             diff_to_return = blocks_in_left
