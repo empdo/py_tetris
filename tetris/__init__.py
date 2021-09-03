@@ -64,7 +64,7 @@ class Holder:
         self.blocks = []
 
     def draw_holder(self):
-        offset = 0
+        offset = 323
         if self.color == (0, 255, 255):
             offset -= block_size -15
 
@@ -73,7 +73,7 @@ class Holder:
                 if column != ".":
                     self.blocks.append(
                         pyglet.shapes.BorderedRectangle(
-                        offset + 17 + x*(block_size -6), ui_offset + 317 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
+                        offset + 17 + x*(block_size -6), ui_offset + 183 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
                     )
 
 class Next:
@@ -84,7 +84,7 @@ class Next:
         self.blocks = []
 
     def draw_holder(self):
-        offset = 470
+        offset = 323
         if self.color == (0, 255, 255):
             offset -= block_size -15
 
@@ -93,7 +93,7 @@ class Next:
                 if column != ".":
                     self.blocks.append(
                         pyglet.shapes.BorderedRectangle(
-                        offset + 17 + x*(block_size -6), ui_offset + 317 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
+                        offset + 17 + x*(block_size -6), ui_offset + 356 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
                     )
 
 class Block:
@@ -198,7 +198,7 @@ class Board:
             for x, block_color in enumerate(row):
                 self.blocks.append(
                     pyglet.shapes.BorderedRectangle(
-                    150 + 2 + x*block_size, 2 + y*block_size, block_size - 2, block_size - 2, 4, div_vec(block_color, 2), block_color, batch=batch)
+                    2 + x*block_size, 2 + y*block_size, block_size - 2, block_size - 2, 4, div_vec(block_color, 2), block_color, batch=batch)
                 )
 
         batch.draw()
