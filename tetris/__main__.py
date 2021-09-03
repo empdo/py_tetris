@@ -48,7 +48,7 @@ def on_draw():
 
     #for index, letter in enumerate("HOLD"):
     pyglet.shapes.BorderedRectangle(
-    340, 420, 125, 100, 4,(41, 40, 40), div_vec((41, 40, 40), 2) ).draw()
+    340, 420, 125, 100, 8,(41, 40, 40), div_vec((41, 40, 40), 2) ).draw()
     (pyglet.text.Label("NEXT",
             font_name='Open Sans',
             font_size=22,
@@ -58,7 +58,7 @@ def on_draw():
             anchor_x='center', anchor_y='center')).draw()
 
     pyglet.shapes.BorderedRectangle(
-    340, 250, 125, 100, 4,(41, 40, 40), div_vec((41, 40, 40), 2) ).draw()
+    340, 250, 125, 100, 8,(41, 40, 40), div_vec((41, 40, 40), 2) ).draw()
     (pyglet.text.Label("HOLD",
             font_name='Open Sans',
             font_size=22,

@@ -195,22 +195,32 @@ class Board:
     def draw_board(self):
         for y, row in enumerate(placed_blocks):
             for x, block_color in enumerate(row):
-                
                 color = block_color if block_color != None else bg_color
 
                 self.blocks.append(
-                    pyglet.shapes.BorderedRectangle(
-                    2 + x*block_size, 2 + y*block_size, block_size - 2, block_size - 2, 4, div_vec(color, 2), color, batch=batch)
+                    self.create_shape([y, x], color)
                 )
 
-        batch.draw()
-    
+        for position in self.current_block.position:
+            self.create_shape(position, self.current_block.color)
+            
+        if self.current_block:
+            positions = self.lowest_block_position()
+            for position in positions:
+                self.create_shape(position, ghost_block_color)
 
+        batch.draw()
+
+    def create_shape(self, position, color):
+        self.blocks.append(
+            pyglet.shapes.BorderedRectangle(
+            2 + position[1]*block_size, 2 + position[0]*block_size, block_size - 2, block_size - 2, 4, div_vec(color, 2), color, batch=batch)
+        )
+    
     # makes a blank board, sets the current block then the placed blocks
     def update_board(self):
         if self.current_block:
             self.check_lines()
-            self.lowest_block_position()
 
         self.draw_board()
 
@@ -225,8 +235,7 @@ class Board:
         while self.can_move(i, 0):
             i -= 1
 
-        for position in block_positions:
-            self.grid[position[0] + i + 1][position[1]] = ghost_block_color
+        return [[pos[0] + i + 1, pos[1]] for pos in block_positions]
 
     def hard_drop_block(self):
         while self.can_move(-1, 0):
