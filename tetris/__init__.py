@@ -177,7 +177,7 @@ class Block:
             return([True, 0])
 
         for pos in position:
-            if pos[1] + diff_to_return > width or placed_blocks[pos[0]][pos[1] + diff_to_return] != None:
+            if pos[1] + diff_to_return < 0 or pos[1] + diff_to_return > width or placed_blocks[pos[0]][pos[1] + diff_to_return] != None:
                 return[False, 0]
 
         return([False, diff_to_return])
