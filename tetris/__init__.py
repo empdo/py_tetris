@@ -77,7 +77,7 @@ class Holder:
                 if column != ".":
                     self.blocks.append(
                         pyglet.shapes.BorderedRectangle(
-                            offset + 17 + x*(block_size - 6), ui_offset + 183 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
+                            offset + 17 + x*(block_size - 6), ui_offset + 183 + y*(block_size-6), block_size - 8, block_size - 8, 4, div_vec(self.color, 2), self.color, batch=batch)
                     )
 
 
@@ -98,7 +98,7 @@ class Next:
                 if column != ".":
                     self.blocks.append(
                         pyglet.shapes.BorderedRectangle(
-                            offset + 17 + x*(block_size - 6), ui_offset + 356 + y*(block_size-6), block_size - 6, block_size - 6, 4, div_vec(self.color, 2), self.color, batch=batch)
+                            offset + 17 + x*(block_size - 6), ui_offset + 356 + y*(block_size-6), block_size - 8, block_size - 8, 4, div_vec(self.color, 2), self.color, batch=batch)
                     )
 
 

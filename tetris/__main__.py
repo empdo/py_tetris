@@ -45,11 +45,11 @@ def on_key_release(symbol, modifiers):
 
 def move_right(var):
     board.block_side(1)
-    pyglet.clock.schedule_once(move_right, 1/4)
+    #pyglet.clock.schedule_once(move_right, 1/4)
 
 def move_left(var):
     board.block_side(-1)
-    pyglet.clock.schedule_once(move_left, 1/4)
+    #pyglet.clock.schedule_once(move_left, 1/4)
 
 
 
@@ -64,7 +64,7 @@ def on_draw():
     text_options = {"font_name": 'Open Sans', "font_size":18, "color":(255, 255, 255, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
 
     pyglet.shapes.BorderedRectangle(
-    340, 420, 125, 100, 8,(41, 40, 40), div_vec((41, 40, 40), 2) ).draw()
+    340, 420, 125, 100, 8,(41, 0, 40), div_vec((41, 0, 40), 2) ).draw()
 
     (pyglet.text.Label("NEXT",
             x=402.5, y=540,
@@ -72,7 +72,7 @@ def on_draw():
             )).draw()
 
     pyglet.shapes.BorderedRectangle(
-    340, 250, 125, 100, 8,(41, 40, 40), div_vec((41, 40, 40), 2) ).draw()
+    340, 250, 125, 100, 8,(41, 0, 40), div_vec((41, 0, 40), 2) ).draw()
     (pyglet.text.Label("HOLD",
             **text_options,
             x= 402.5, y=370)).draw()
@@ -83,6 +83,7 @@ def on_draw():
             ).draw()
 
     (pyglet.text.Label(str(board.score),
+            **text_options,
             x= 402.5, y=180
     )).draw()
 
