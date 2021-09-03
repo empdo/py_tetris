@@ -110,7 +110,7 @@ class Block:
         for i, _i in enumerate(self.block_type["shapes"][0]):
             for j, _j in enumerate(_i):
                 if _j != ".":
-                    _position.append([heigth - (i+2), j, _j])
+                    _position.append([heigth - (i+2), width // 2 + j - 2, _j])
 
         return _position
 
