@@ -206,9 +206,9 @@ class Board:
 
     # makes a blank board, sets the current block then the placed blocks
     def update_board(self):
-
         if self.current_block:
             self.grid = copy.deepcopy(default_grid)
+
             self.check_lines()
             self.lowest_block_position()
 
@@ -221,6 +221,9 @@ class Board:
                             self.grid[x][y] = column
 
         self.draw_board()
+
+    def intersect(this, other):
+        return [[this[y][x] or other[y][x] for x in range(width +1)] for y in range(heigth +1)]
 
 
     def lowest_block_position(self):
@@ -243,12 +246,8 @@ class Board:
 
     def check_lines(self):
         for x, row in enumerate(placed_blocks):
-            count = 0
-            for y, column in enumerate(row):
-                if column != None:
-                    count += 1
-                if count == 10:
-                    self.clear_line(x) 
+            if all(row):
+                self.clear_line(x) 
 
     def clear_line(self, line):
         placed_blocks.pop(line)
@@ -261,23 +260,22 @@ class Board:
         self.current_block = Block(self.queue[0][0], self.queue[0][1])
         self.queue.pop(0)
 
-        self.next = Next(blocks[self.queue[1][0]], self.queue[1][1])
+        if self.next is None:
+            self.next = Next(blocks[self.queue[0][0]], self.queue[0][1])
+        else:
+            self.next.block = self.queue[0][0]
+            self.color = self.queue[0][1]
+
         self.next.draw_holder()
 
         self.update_board()
 
     def block_down(self):
         positions = self.current_block.position
-        if self.can_move(-1, 0):
-            for i in positions:
-                i[0] -= 1
-        else:
-            for i in positions:
-                placed_blocks[i[0]][i[1]] = self.current_block.color
-                
-            self.spawn_block()
+        for i in positions:
+            i[0] -= 1
 
-        self.update_board()
+        
 
     # TODO: change name
     def block_side(self, change):
@@ -313,6 +311,7 @@ class Board:
             self.spawn_block()
         else:
             self.current_block = self.stashed_block
+            self.current_block.position =  self.current_block.default_pos()
 
         self.stashed_block = _current_block
         self.update_board()

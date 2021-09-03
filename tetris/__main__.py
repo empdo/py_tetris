@@ -3,7 +3,7 @@ import pyglet
 from pyglet.window import key
 from pyglet.gl import *
 
-from .import Board
+from .import Board, placed_blocks
 
 background = pyglet.graphics.OrderedGroup(0)
 window = pyglet.window.Window(480, 600, "tetris")
@@ -78,12 +78,18 @@ def div_vec(vec: tuple[int, ...], scalar: int):
 
 
 def update_frames(var):
-    if board.current_block != None:
-        board.block_down()
+    positions = board.current_block.position
+    if (board.current_block != None):
+        if board.can_move(-1, 0):
+            board.block_down()
+        else:
+            for i in positions:
+                placed_blocks[i[0]][i[1]] = board.current_block.color
 
     if(len(board.queue) <= 2):
         board.create_bundle()
 
+    board.update_board()
 
 pyglet.clock.schedule_interval(update_frames, drop_time)
 
