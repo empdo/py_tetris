@@ -3,6 +3,7 @@ from .shapes import *
 import copy
 import random
 from pprint import pprint
+import numpy as np
 
 import pyglet
 from pyglet.graphics import draw, Batch
@@ -16,7 +17,7 @@ ui_offset = 50
 bg_color = (40, 0, 41)
 ghost_block_color = (63, 46, 64)
 
-score = 0
+scores = (0, 100, 200, 300, 800)
 
 width, heigth = 9, 20
 
@@ -196,6 +197,7 @@ class Board:
         self.current_block = None
         self.placed_blocks = []
         self.blocks = []
+        self.score = 0
 
         self.queue = []
         self.holder = None
@@ -230,9 +232,6 @@ class Board:
 
     # makes a blank board, sets the current block then the placed blocks
     def update_board(self):
-        if self.current_block:
-            self.check_lines()
-
         self.draw_board()
 
     def lowest_block_position(self):
@@ -254,15 +253,25 @@ class Board:
         self.spawn_block()
 
     def check_lines(self):
-        for x, row in enumerate(placed_blocks):
+        number_of_rows = 0
+        rows = []
+        for row in placed_blocks:
             if all(row):
-                self.clear_line(x)
+                number_of_rows += 1
+                rows.append(row)
+
+        for line in rows:
+            self.clear_line(line)
+
+        self.score += scores[number_of_rows] #TODO: multiplicera med level
 
     def clear_line(self, line):
-        placed_blocks.pop(line)
+        placed_blocks.remove(line)
         placed_blocks.insert(16, [None for x in range(width + 1)])
 
+
     def spawn_block(self):
+        self.check_lines()
         if (len(self.queue) <= 1):
             self.create_bundle()
 

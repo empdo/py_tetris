@@ -3,7 +3,7 @@ import pyglet
 from pyglet.window import key
 from pyglet.gl import *
 
-from .import Board, placed_blocks, score
+from .import Board, placed_blocks
 
 background = pyglet.graphics.OrderedGroup(0)
 window = pyglet.window.Window(485, 600, "tetris")
@@ -82,7 +82,7 @@ def on_draw():
             x= 402.5, y=210)
             ).draw()
 
-    (pyglet.text.Label(str(score),
+    (pyglet.text.Label(str(board.score),
             x= 402.5, y=180
     )).draw()
 
