@@ -74,9 +74,6 @@ def div_vec(vec: tuple[int, ...], scalar: int):
     return *map(lambda x: x // scalar, vec),
 
 
-
-
-
 def update_frames(var):
     positions = board.current_block.position
     if (board.current_block != None):
@@ -85,6 +82,7 @@ def update_frames(var):
         else:
             for i in positions:
                 placed_blocks[i[0]][i[1]] = board.current_block.color
+            board.spawn_block()
 
     if(len(board.queue) <= 2):
         board.create_bundle()

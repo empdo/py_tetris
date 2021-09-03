@@ -166,8 +166,6 @@ class Block:
                 else:
                     blocks_in_left += 1
 
-        print(blocks_outside, blocks_in_left, blocks_in_rigth)
-
         diff_to_return = 0
         if (blocks_in_left != 0 and blocks_in_rigth == 0 and blocks_outside == 0):
             diff_to_return = blocks_in_left
@@ -182,6 +180,7 @@ class Block:
             if placed_blocks[pos[0]][pos[1] + diff_to_return] == None:
                 break
             return([False, diff_to_return])
+
         return[False, 0]
         
 
@@ -233,10 +232,6 @@ class Board:
 
         self.draw_board()
 
-    def intersect(this, other):
-        return [[this[y][x] or other[y][x] for x in range(width +1)] for y in range(heigth +1)]
-
-
     def lowest_block_position(self):
         block_positions = self.current_block.position
 
@@ -270,11 +265,7 @@ class Board:
         self.current_block = Block(self.queue[0][0], self.queue[0][1])
         self.queue.pop(0)
 
-        if self.next is None:
-            self.next = Next(blocks[self.queue[0][0]], self.queue[0][1])
-        else:
-            self.next.block = self.queue[0][0]
-            self.color = self.queue[0][1]
+        self.next = Next(blocks[self.queue[0][0]], self.queue[0][1])
 
         self.next.draw_holder()
 
@@ -284,8 +275,6 @@ class Board:
         positions = self.current_block.position
         for i in positions:
             i[0] -= 1
-
-        
 
     # TODO: change name
     def block_side(self, change):
