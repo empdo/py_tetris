@@ -134,6 +134,10 @@ class Block:
                     _position.append(
                         [rotation_point[0] + (2 - y), rotation_point[1] - (2 - x), column])
 
+        #kolla om man kan rotera
+        #om man är utanför 
+        #
+
         can_rotate = self.can_rotate(_position, rotation_point)
         if can_rotate[0] or can_rotate[1] != 0:
             for i in _position:
@@ -173,8 +177,13 @@ class Block:
             diff_to_return = blocks_outside
         elif blocks_outside == 0 and blocks_in_rigth == 0 and blocks_in_left == 0:
             return([True, 0])
-
-        return([False, diff_to_return])
+        
+        for pos in position:
+            if placed_blocks[pos[0]][pos[1] + diff_to_return] == None:
+                break
+            return([False, diff_to_return])
+        return[False, 0]
+        
 
 # TODO: fixa småfel
 # TODO: veta om det är bra eller dåligt med tre miljarder funktioner
@@ -200,14 +209,14 @@ class Board:
                 self.blocks.append(
                     self.create_shape([y, x], color)
                 )
-
-        for position in self.current_block.position:
-            self.create_shape(position, self.current_block.color)
-            
         if self.current_block:
             positions = self.lowest_block_position()
             for position in positions:
                 self.create_shape(position, ghost_block_color)
+
+        for position in self.current_block.position:
+            self.create_shape(position, self.current_block.color)
+            
 
         batch.draw()
 
