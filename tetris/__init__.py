@@ -61,7 +61,7 @@ blocks = {
 
 
 class Holder:
-    def __init__(self, block, color):
+    def __init__(self, block: dict, color: tuple[int, ...]):
         self.block = block["shapes"][0]
         self.block_name = block
         self.color = color
@@ -82,7 +82,7 @@ class Holder:
 
 
 class Next:
-    def __init__(self, block, color):
+    def __init__(self, block: dict, color: tuple[int, ...]):
         self.block = block["shapes"][0]
         self.block_name = block
         self.color = color
@@ -103,7 +103,7 @@ class Next:
 
 
 class Block:
-    def __init__(self, block_type, color):
+    def __init__(self, block_type: str, color: tuple[int, ...]):
         self.block_type = blocks[block_type]
         self.rotation = 0
         self.color = color
@@ -129,20 +129,19 @@ class Block:
             if "1" in position:
                 rotation_point = position
 
-        # clear positions and add one to the rotation
         _position.append(rotation_point)
         _rotation = (self.rotation + 1) % len(self.block_type["shapes"])
 
-        # set varje block till diffrensen i position från rotation point + rotaion point eller något jag behöver mer hjärnceller
+        """
+        Calculates the new position from every block out of the rotation point,
+        Results in the position for the next rotation
+        """
         for y, row in enumerate(self.block_type["shapes"][_rotation]):
             for x, column in enumerate(row):
                 if column not in [".", "1"]:
                     _position.append(
                         [rotation_point[0] + (2 - y), rotation_point[1] - (2 - x), column])
 
-        # kolla om man kan rotera
-        # om man är utanför
-        #
 
         can_rotate = self.can_rotate(_position, rotation_point)
         if can_rotate[0] or can_rotate[1] != 0:
@@ -151,13 +150,21 @@ class Block:
             self.position = _position
             self.rotation = _rotation
 
-    def can_rotate(self, position, rotation_point):
+    """
+    Checks if any block is outside of map, 0>x>10
+    Checks if any block is in another block, with the kickback if any block was outside
+    Checks if any block is in another block after compensating with kickback
+
+    If any block is in another block, return that it should not turn, [False, 0]
+    If no blocks are in any other block, return that it should turn [True, 0]... 
+    ...if it does not have any kickback, if it does, return that it should turn with kickback, [False, kickback]
+
+    """
+    def can_rotate(self, position: list[tuple[int, ...]], rotation_point: tuple[int, ...]):
         blocks_outside = 0
         blocks_in_rigth = 0
         blocks_in_left = 0
 
-        # Returna false om de inte fungerar men med en diff på om blocket \
-        # kan och behöver flytta sig åt sidan om den är utanför eller i ett annat block
         for block_position in position:
             if (block_position[1] < 0):
                 blocks_outside += 1
@@ -188,9 +195,6 @@ class Block:
 
         return([False, diff_to_return])
 
-
-# TODO: fixa småfel
-# TODO: veta om det är bra eller dåligt med tre miljarder funktioner
 
 class Board:
     def __init__(self):
@@ -224,17 +228,22 @@ class Board:
 
         batch.draw()
 
-    def create_shape(self, position, color):
+    def create_shape(self, position: tuple[int, ...], color: tuple[int, ...]):
         self.blocks.append(
             pyglet.shapes.BorderedRectangle(
                 2 + position[1]*block_size, 2 + position[0]*block_size, block_size - 2, block_size - 2, 4, div_vec(color, 2), color, batch=batch)
         )
 
-    # makes a blank board, sets the current block then the placed blocks
     def update_board(self):
         self.draw_board()
 
+
+    """
+    Finds the lowest posible y value for the current tetremino,
+    returns it
+    """
     def lowest_block_position(self):
+
         block_positions = self.current_block.position
 
         i = 0
@@ -243,15 +252,25 @@ class Board:
 
         return [[pos[0] + i + 1, pos[1]] for pos in block_positions]
 
+
+    """
+    Moves the block down until it can't,
+    Adds the block to placed blocks, spawns a new one
+    """
     def hard_drop_block(self):
         while self.can_move(-1, 0):
             self.block_down()
+
         for block_position in self.current_block.position:
             placed_blocks[block_position[0]][block_position[1]
                                              ] = self.current_block.color
 
         self.spawn_block()
-
+    
+    """
+    Checks every line, is it full, then...
+    ...remove it and insert a empty line at the top of the placed block grid
+    """
     def check_lines(self):
         number_of_rows = 0
         rows = []
@@ -270,6 +289,12 @@ class Board:
         placed_blocks.insert(16, [None for x in range(width + 1)])
 
 
+    """
+    Checks line, if there are any completed ones
+    If the queue has one or less tetremino in it, create a new bundle
+    Set current block to the first one in the queue,
+    Set the second block in the quee to be visible in the next container
+    """
     def spawn_block(self):
         self.check_lines()
         if (len(self.queue) <= 1):
@@ -279,30 +304,41 @@ class Board:
         self.queue.pop(0)
 
         self.next = Next(blocks[self.queue[0][0]], self.queue[0][1])
-
         self.next.draw_holder()
 
         self.update_board()
 
+    """
+    Loops through every block inte the current tetremino,
+    lowers the blocks y value by one
+    """
     def block_down(self):
         positions = self.current_block.position
         for i in positions:
             i[0] -= 1
 
+    """
+    Delta_x: either 1 or -1 depending on the side to go,
+    Changes every blocks x value by delta_x
+    """
     # TODO: change name
-    def block_side(self, change):
+    def block_side(self, delta_x: int):
         positions = self.current_block.position
-        if self.can_move(0, change):
-            for i in positions:
-                i[1] += change
+        if self.can_move(0, delta_x):
+            for block in positions:
+                block[1] += delta_x
 
     def piece_rotate(self):
         self.current_block.rotate_pos()
 
-    def can_move(self, delta_x, delta_y):
-        for i in self.current_block.position:
-            x = i[0] + delta_x
-            y = i[1] + delta_y
+    """
+    Adds the change in the x and y from delta_x, delta_y
+    Checks if the position is occupied or outside of the map 
+    """
+    def can_move(self, delta_x: int, delta_y: int):
+        for block in self.current_block.position:
+            x = block[0] + delta_x
+            y = block[1] + delta_y
 
             if x < 0 or y < 0 or y > width:
                 return False
@@ -331,20 +367,19 @@ class Board:
 
         self.holder.draw_holder()
 
-    # creates a bundle then adds it to queue
 
+    """
+    Create a copy of the block list, shuffles if
+    Adds the content of the list to the block queue
+    """
     def create_bundle(self):
         # scramble _blocks
-        _blocks = [[str(i), blocks[i]["color"]] for i in blocks]
+        _blocks = [[str(block), blocks[block]["color"]] for block in blocks]
 
         random.shuffle(_blocks)
 
-        for i in _blocks:
-            self.queue.append(i)
-
-    def rotate():
-        pass
-
+        for block in _blocks:
+            self.queue.append(block)
 
 def div_vec(vec: tuple[int, ...], scalar: int):
     return *map(lambda x: x // scalar, vec),
