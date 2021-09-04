@@ -87,6 +87,16 @@ def on_draw():
             x= 402.5, y=180
     )).draw()
 
+    (pyglet.text.Label("LEVEL:",
+            **text_options,
+            x= 402.5, y=140)
+            ).draw()
+
+    (pyglet.text.Label(str(board.level),
+            **text_options,
+            x= 402.5, y=110
+    )).draw()
+
     board.update_board()
 
 def div_vec(vec: tuple[int, ...], scalar: int):

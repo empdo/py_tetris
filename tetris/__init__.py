@@ -202,6 +202,8 @@ class Board:
         self.placed_blocks = []
         self.blocks = []
         self.score = 0
+        self.level = 0
+        self.cleared_lines = 0
 
         self.queue = []
         self.holder = None
@@ -233,8 +235,14 @@ class Board:
             pyglet.shapes.BorderedRectangle(
                 2 + position[1]*block_size, 2 + position[0]*block_size, block_size - 2, block_size - 2, 4, div_vec(color, 2), color, batch=batch)
         )
-
+    """
+    Adds level when cleard enough lines
+    """
     def update_board(self):
+        if self.cleared_lines >= max(100, (self.level * 10 - 50)) or self.cleared_lines >= (self.level * 10 + 10):
+            self.level += 1
+        print(self.cleared_lines)
+
         self.draw_board()
 
 
@@ -281,6 +289,7 @@ class Board:
 
         for line in rows:
             self.clear_line(line)
+            self.cleared_lines += 1
 
         self.score += scores[number_of_rows] #TODO: multiplicera med level
 
