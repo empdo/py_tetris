@@ -14,33 +14,37 @@ drop_time = 0.7
 
 hold_text = []
 
+def div_vec(vec: tuple[int, ...], scalar: int):
+    return *map(lambda x: x // scalar, vec),
 
 class Menu:
-    def __init__(self, options: tuple[str]):
-        self.options = options
+    def __init__(self, *options: str):
         self.current_option = 0
+        self._options = options
 
-    def get_list(self):
+    @property
+    def options(self):
         list = [shapes.BorderedRectangle(
         60, 100, 200, 400, 8,(200, 200, 200), div_vec((0,0,0),1))]
 
         text_options = {"font_name": 'Karmatic Arcade', "font_size": 18, "color":(0,0,0, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
     
-        for index, option in enumerate(self.options):
+        for index, option in enumerate(self._options):
             list.append(
                 (pyglet.text.Label(option.upper() if index is self.current_option else option.lower(),
                         **text_options,
                         #underline = (0,0,0, 255),
-                        x=160, y= ((265 + (len(self.options) * 35)) - index * 35)
+                        x=160, y= ((265 + (len(self._options) * 35)) - index * 35)
                 ))
             )
 
         return list
 
+
     
 
 board = Board()
-menu = Menu(["resume", "restart", "options"])
+menu = Menu("resume", "restart", "options")
 
 
 @window.event
@@ -64,9 +68,9 @@ def on_key_press(symbol, modifiers):
     if symbol == key.P:
         board.pause_game()
     elif symbol == key.UP:
-        menu.current_option = (menu.current_option -1 ) % len(menu.options)
+        menu.current_option = (menu.current_option -1 ) % (len(menu.options) -1)
     elif symbol == key.DOWN:
-        menu.current_option = (menu.current_option +1 ) % len(menu.options)
+        menu.current_option = (menu.current_option +1 ) % (len(menu.options) -1)
 
 @window.event
 def on_key_release(symbol, modifiers):
@@ -142,13 +146,12 @@ def on_draw():
         shapes.BorderedRectangle(
         60, 100, 200, 400, 8,(200, 200, 200), div_vec((0,0,0),1)).draw()
 
-        for option in menu.get_list():
+        for option in menu.options:
             option.draw()
 
 
 
-def div_vec(vec: tuple[int, ...], scalar: int):
-    return *map(lambda x: x // scalar, vec),
+
 
 def update_frames(var):
 
