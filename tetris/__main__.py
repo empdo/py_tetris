@@ -1,7 +1,9 @@
+from re import MULTILINE
 import pyglet
 
 from pyglet.window import key
 from pyglet.gl import *
+from pyglet import font, shapes
 
 from .import Board, placed_blocks
 
@@ -12,7 +14,34 @@ drop_time = 0.7
 
 hold_text = []
 
+
+class Menu:
+    def __init__(self, options: tuple[str]):
+        self.options = options
+        self.current_option = 0
+
+    def get_list(self):
+        list = [shapes.BorderedRectangle(
+        60, 100, 200, 400, 8,(200, 200, 200), div_vec((0,0,0),1))]
+
+        text_options = {"font_name": 'Karmatic Arcade', "font_size": 18, "color":(0,0,0, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
+    
+        for index, option in enumerate(self.options):
+            list.append(
+                (pyglet.text.Label(option.upper() if index is self.current_option else option.lower(),
+                        **text_options,
+                        #underline = (0,0,0, 255),
+                        x=160, y= ((265 + (len(self.options) * 35)) - index * 35)
+                ))
+            )
+
+        return list
+
+    
+
 board = Board()
+menu = Menu(["resume", "restart", "options"])
+
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -34,6 +63,10 @@ def on_key_press(symbol, modifiers):
 
     if symbol == key.P:
         board.pause_game()
+    elif symbol == key.UP:
+        menu.current_option = (menu.current_option -1 ) % len(menu.options)
+    elif symbol == key.DOWN:
+        menu.current_option = (menu.current_option +1 ) % len(menu.options)
 
 @window.event
 def on_key_release(symbol, modifiers):
@@ -63,7 +96,7 @@ def on_draw():
 
     #for index, letter in enumerate("HOLD"):
 
-    text_options = {"font_name": 'Open Sans', "font_size":18, "color":(255, 255, 255, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
+    text_options = {"font_name": 'Karmatic Arcade', "font_size":18, "color":(255, 255, 255, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
 
     pyglet.shapes.BorderedRectangle(
     340, 420, 125, 100, 8,(41, 0, 40), div_vec((41, 0, 40), 2) ).draw()
@@ -71,6 +104,10 @@ def on_draw():
     (pyglet.text.Label("NEXT",
             x=402.5, y=540,
             **text_options        
+            )).draw()
+    (pyglet.text.Label("NEXT",
+            x=403.5, y=539,
+            **text_options       
             )).draw()
 
     pyglet.shapes.BorderedRectangle(
@@ -100,6 +137,15 @@ def on_draw():
     )).draw()
 
     board.update_board()
+
+    if board.is_paused:
+        shapes.BorderedRectangle(
+        60, 100, 200, 400, 8,(200, 200, 200), div_vec((0,0,0),1)).draw()
+
+        for option in menu.get_list():
+            option.draw()
+
+
 
 def div_vec(vec: tuple[int, ...], scalar: int):
     return *map(lambda x: x // scalar, vec),
