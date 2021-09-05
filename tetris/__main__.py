@@ -18,20 +18,22 @@ board = Board()
 def on_key_press(symbol, modifiers):
     global drop_time
 
-    if symbol == key.LEFT:
-        move_left(None)
-    elif symbol == key.RIGHT:
-        move_right(None)
-    elif symbol == key.UP:
-        board.piece_rotate()
-    elif symbol == key.DOWN:
-        drop_time = 0.05
-    elif symbol == key.SPACE:
-        board.hard_drop_block()
-    elif symbol == key.C:
-        board.hold_block()
-    elif symbol == key.ESCAPE:
-        board.pause()
+    if (not board.is_paused):
+        if symbol == key.LEFT:
+            move_left(None)
+        elif symbol == key.RIGHT:
+            move_right(None)
+        elif symbol == key.UP:
+            board.piece_rotate()
+        elif symbol == key.DOWN:
+            drop_time = 0.05
+        elif symbol == key.SPACE:
+            board.hard_drop_block()
+        elif symbol == key.C:
+            board.hold_block()
+
+    if symbol == key.P:
+        board.pause_game()
 
 @window.event
 def on_key_release(symbol, modifiers):
@@ -103,16 +105,18 @@ def div_vec(vec: tuple[int, ...], scalar: int):
     return *map(lambda x: x // scalar, vec),
 
 def update_frames(var):
-    positions = board.current_block.position
-    if (board.current_block != None):
-        if board.can_move(-1, 0):
-            board.block_down()
-        else:
-            for i in positions:
-                placed_blocks[i[0]][i[1]] = board.current_block.color
-            board.spawn_block()
-    if(len(board.queue) <= 2):
-        board.create_bundle()
+
+    if not board.is_paused:
+        positions = board.current_block.position
+        if (board.current_block != None):
+            if board.can_move(-1, 0):
+                board.block_down()
+            else:
+                for i in positions:
+                    placed_blocks[i[0]][i[1]] = board.current_block.color
+                board.spawn_block()
+        if(len(board.queue) <= 2):
+            board.create_bundle()
 
     board.update_board()
 

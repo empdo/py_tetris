@@ -205,6 +205,8 @@ class Board:
         self.level = 0
         self.cleared_lines = 0
 
+        self.is_paused = False
+
         self.queue = []
         self.holder = None
         self.stashed_block = None
@@ -241,7 +243,6 @@ class Board:
     def update_board(self):
         if self.cleared_lines >= max(100, (self.level * 10 - 50)) or self.cleared_lines >= (self.level * 10 + 10):
             self.level += 1
-        print(self.cleared_lines)
 
         self.draw_board()
 
@@ -357,9 +358,6 @@ class Board:
 
         return True
 
-    def can_rotate():
-        pass
-
     def hold_block(self):
         _current_block = self.current_block
         self.holder = Holder(self.current_block.block_type,
@@ -389,6 +387,12 @@ class Board:
 
         for block in _blocks:
             self.queue.append(block)
+
+    """
+    Pause game
+    """
+    def pause_game(self):
+        self.is_paused = not self.is_paused
 
 def div_vec(vec: tuple[int, ...], scalar: int):
     return *map(lambda x: x // scalar, vec),
