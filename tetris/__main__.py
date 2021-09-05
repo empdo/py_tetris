@@ -10,8 +10,9 @@ from pathlib import Path
 background = pyglet.graphics.OrderedGroup(0)
 window = pyglet.window.Window(485, 600, "tetris")
 
-font.add_file((Path(__file__).parent/"font.ttf"))
-font = pyglet.font.load("Karmatic Arcade")
+font.add_directory((Path(__file__).parent)/"")
+font.add_file("font.ttf")
+k_font = pyglet.font.load("Karmatic Arcade")
 
 
 drop_time = 0.7
@@ -31,7 +32,7 @@ class Menu:
         list = [shapes.BorderedRectangle(
         60, 100, 200, 400, 8,(200, 200, 200), div_vec((0,0,0),1))]
 
-        text_options = {"font_name": font, "font_size": 18, "color":(0,0,0, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
+        text_options = {"font_name": k_font, "font_size": 18, "color":(0,0,0, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
     
         for index, option in enumerate(self._options):
             list.append(
