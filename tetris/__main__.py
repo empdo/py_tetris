@@ -1,14 +1,17 @@
-from re import MULTILINE
 import pyglet
 
 from pyglet.window import key
 from pyglet.gl import *
-from pyglet import font, shapes
+from pyglet import font, shapes, resource
 
 from .import Board, placed_blocks
+from pathlib import Path
 
 background = pyglet.graphics.OrderedGroup(0)
 window = pyglet.window.Window(485, 600, "tetris")
+
+resource.add_font(Path(__file__).parent/"font.ttf")
+font.load("Karmatic Arcade")
 
 drop_time = 0.7
 
