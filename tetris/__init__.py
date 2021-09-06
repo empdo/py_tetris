@@ -24,7 +24,6 @@ width, heigth = 9, 20
 default_grid = [[bg_color for x in range(
     width + 1)] for x in range(heigth + 1)]
 
-placed_blocks = [[None for x in range(width + 1)] for x in range(heigth + 1)]
 
 # BLOCKS
 blocks = {
@@ -120,7 +119,7 @@ class Block:
 
         return _position
 
-    def rotate_pos(self):
+    def rotate_pos(self, placed_blocks):
         _position = []
         _rotation = self.rotation
 
@@ -143,7 +142,7 @@ class Block:
                         [rotation_point[0] + (2 - y), rotation_point[1] - (2 - x), column])
 
 
-        can_rotate = self.can_rotate(_position, rotation_point)
+        can_rotate = self.can_rotate(_position, rotation_point, placed_blocks)
         if can_rotate[0] or can_rotate[1] != 0:
             for i in _position:
                 i[1] += can_rotate[1]
@@ -160,7 +159,7 @@ class Block:
     ...if it does not have any kickback, if it does, return that it should turn with kickback, [False, kickback]
 
     """
-    def can_rotate(self, position: list[tuple[int, ...]], rotation_point: tuple[int, ...]):
+    def can_rotate(self, position: list[tuple[int, ...]], rotation_point: tuple[int, ...], placed_blocks):
         blocks_outside = 0
         blocks_in_rigth = 0
         blocks_in_left = 0
@@ -199,7 +198,7 @@ class Block:
 class Board:
     def __init__(self):
         self.current_block = None
-        self.placed_blocks = []
+        self.placed_blocks = [[None for x in range(width + 1)] for x in range(heigth + 1)]
         self.blocks = []
         self.score = 0
         self.level = 0
@@ -215,7 +214,7 @@ class Board:
 
     # draws the board from grid 🤯
     def draw_board(self):
-        for y, row in enumerate(placed_blocks):
+        for y, row in enumerate(self.placed_blocks):
             for x, block_color in enumerate(row):
                 color = block_color if block_color != None else bg_color
 
@@ -241,10 +240,14 @@ class Board:
     Adds level when cleard enough lines
     """
     def update_board(self):
+
         if self.cleared_lines >= max(100, (self.level * 10 - 50)) or self.cleared_lines >= (self.level * 10 + 10):
             self.level += 1
 
         self.draw_board()
+
+    def resume_game(self):
+        self.is_paused = False
 
 
     """
@@ -271,7 +274,7 @@ class Board:
             self.block_down()
 
         for block_position in self.current_block.position:
-            placed_blocks[block_position[0]][block_position[1]
+            self.placed_blocks[block_position[0]][block_position[1]
                                              ] = self.current_block.color
 
         self.spawn_block()
@@ -283,7 +286,7 @@ class Board:
     def check_lines(self):
         number_of_rows = 0
         rows = []
-        for row in placed_blocks:
+        for row in self.placed_blocks:
             if all(row):
                 number_of_rows += 1
                 rows.append(row)
@@ -295,8 +298,8 @@ class Board:
         self.score += scores[number_of_rows] #TODO: multiplicera med level
 
     def clear_line(self, line):
-        placed_blocks.remove(line)
-        placed_blocks.insert(16, [None for x in range(width + 1)])
+        self.placed_blocks.remove(line)
+        self.placed_blocks.insert(16, [None for x in range(width + 1)])
 
 
     """
@@ -339,7 +342,7 @@ class Board:
                 block[1] += delta_x
 
     def piece_rotate(self):
-        self.current_block.rotate_pos()
+        self.current_block.rotate_pos(self.placed_blocks)
 
     """
     Adds the change in the x and y from delta_x, delta_y
@@ -353,7 +356,7 @@ class Board:
             if x < 0 or y < 0 or y > width:
                 return False
 
-            if placed_blocks[x][y] != None:
+            if self.placed_blocks[x][y] != None:
                 return False
 
         return True

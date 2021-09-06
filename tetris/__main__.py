@@ -2,9 +2,10 @@ import pyglet
 
 from pyglet.window import key
 from pyglet.gl import *
-from pyglet import font, shapes, resource
+from pyglet import font, shapes
+from pyglet.graphics import draw
 
-from .import Board, placed_blocks, bg_color
+from .import Board, bg_color
 from pathlib import Path
 
 background = pyglet.graphics.OrderedGroup(0)
@@ -19,8 +20,20 @@ drop_time = 0.7
 
 hold_text = []
 
+board = Board()
+
 def div_vec(vec: tuple[int, ...], scalar: int):
     return *map(lambda x: x // scalar, vec),
+
+def restart_game():
+    global board
+
+    for block in board.next.blocks:
+        block.delete()
+    for block in board.holder.blocks:
+        block.delete()
+
+    board = Board()
 
 class Menu:
     def __init__(self, *options: str):
@@ -31,32 +44,28 @@ class Menu:
     def options(self):
         bg = shapes.BorderedRectangle(
         0, 0, 320, 600, 8,(0,0,0), div_vec((0,0,0),1))
-        bg.opacity = 150
+        bg.opacity = 185
         list = [bg]
 
         text_options = {"font_name": "Source Code pro", "font_size": 18, "color":(255, 255, 255, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
     
         for index, option in enumerate(self._options):
             list.append(
-                (pyglet.text.Label(("> " + option.lower()) if index is self.current_option else option.lower(),
+                (pyglet.text.Label(("> " + option[0].lower()) if index is self.current_option else option[0].lower(),
                         **text_options,
-                        x=160, y= ((265 + (len(self._options) * 35)) - index * 35)
+                        x=160, y= ((265 + (len(self._options[0]) * 35)) - index * 35)
                 ))
             )
 
         return list
 
     def submit(self):
-        if(self._options[self.current_option] == "resume"):
-            board.is_paused = False
-        else: 
-            pass
-
-
+        self._options[self.current_option][1]()
     
 
-board = Board()
-menu = Menu("resume", "restart", "options")
+
+
+menu = Menu(["resume", board.resume_game], ["restart", restart_game], ["options"])
 
 
 @window.event
@@ -76,15 +85,15 @@ def on_key_press(symbol, modifiers):
             board.hard_drop_block()
         elif symbol == key.C:
             board.hold_block()
-
-    if symbol == key.P:
-        board.pause_game()
-    elif symbol == key.UP:
-        menu.current_option = (menu.current_option -1 ) % (len(menu.options) -1)
-    elif symbol == key.DOWN:
-        menu.current_option = (menu.current_option +1 ) % (len(menu.options) -1)
-    elif symbol == key.RETURN:
-        menu.submit()
+        elif symbol == key.P:
+            board.pause_game()
+    else:
+        if symbol == key.UP:
+            menu.current_option = (menu.current_option -1 ) % (len(menu.options) -1)
+        elif symbol == key.DOWN:
+            menu.current_option = (menu.current_option +1 ) % (len(menu.options) -1)
+        elif symbol == key.RETURN:
+            menu.submit()
 
 @window.event
 def on_key_release(symbol, modifiers):
@@ -161,9 +170,6 @@ def on_draw():
             option.draw()
 
 
-
-
-
 def update_frames(var):
 
     if not board.is_paused:
@@ -173,7 +179,7 @@ def update_frames(var):
                 board.block_down()
             else:
                 for i in positions:
-                    placed_blocks[i[0]][i[1]] = board.current_block.color
+                    board.placed_blocks[i[0]][i[1]] = board.current_block.color
                 board.spawn_block()
         if(len(board.queue) <= 2):
             board.create_bundle()
