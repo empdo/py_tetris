@@ -6,8 +6,10 @@ from pprint import pprint
 #import numpy as np
 
 import pyglet
+from pyglet import media
 from pyglet.graphics import draw, Batch
 import pyglet.text
+
 
 batch = Batch()
 

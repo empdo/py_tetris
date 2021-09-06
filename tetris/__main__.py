@@ -1,8 +1,13 @@
 import pyglet
+from pyglet.media.codecs.base import StaticSource
+import random
+import time
+import threading
 
 from pyglet.window import key
 from pyglet.gl import *
-from pyglet import font, shapes
+from pyglet import font, shapes, media, resource
+from pyglet.media import load, synthesis, SourceGroup
 from pyglet.graphics import draw
 
 from .import Board, bg_color, width, heigth
@@ -14,6 +19,16 @@ window = pyglet.window.Window(485, 600, "tetris")
 #font.add_directory((Path(__file__).parent)/"")
 #font.add_file("font.ttf")
 #k_font = pyglet.font.load("Karmatic Arcade")
+
+rotate_sound = pyglet.media.load("/home/emil/dev/py_tetris/sounds/block-rotate.mp3", streaming=False)
+hard_drop_sound = pyglet.media.load("/home/emil/dev/py_tetris/sounds/force-hit.mp3", streaming=False)
+
+
+sound = pyglet.media.load("/home/emil/dev/py_tetris/sounds/music.mp3", streaming=False)
+
+BACKGROUND_OPTIONS = (sound)
+
+player = pyglet.media.Player()
 
 
 drop_time = 0.7
@@ -78,10 +93,12 @@ def on_key_press(symbol, modifiers):
             move_right(None)
         elif symbol == key.UP:
             board.piece_rotate()
+            rotate_sound.play()
         elif symbol == key.DOWN:
             drop_time = 0.05
         elif symbol == key.SPACE:
             board.hard_drop_block()
+            hard_drop_sound.play()
         elif symbol == key.C:
             board.hold_block()
         elif symbol == key.P:
@@ -187,6 +204,21 @@ def update_frames(var):
 
     pyglet.clock.schedule_once(update_frames, drop_time)
 
+def play_background_sound():
+  global player
+  player.queue(sound)
+  player.play()
+  
+  # This is optional; it's just a function that keeps the player filled so there aren't any breaks.
+  def queue_sounds():
+    global player
+    while True:
+      player.queue(sound)
+      time.sleep(20) # change this if the background music you have is shorter than 3 minutes
+  
+  threading.Thread(target=queue_sounds).start()
+
+play_background_sound()
 
 update_frames("")
 
