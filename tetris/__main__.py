@@ -30,8 +30,9 @@ def restart_game():
 
     for block in board.next.blocks:
         block.delete()
-    for block in board.holder.blocks:
-        block.delete()
+    if board.holder:
+        for block in board.holder.blocks:
+            block.delete()
 
     board = Board()
 
