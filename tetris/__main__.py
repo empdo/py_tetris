@@ -37,7 +37,7 @@ def restart_game():
     board = Board()
 
 class Menu:
-    def __init__(self, *options: str):
+    def __init__(self, **options):
         self.current_option = 0
         self._options = options
 
@@ -50,21 +50,21 @@ class Menu:
 
         text_options = {"font_name": "Source Code pro", "font_size": 18, "color":(255, 255, 255, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
     
-        for index, option in enumerate(self._options):
+        for index, (option, function) in enumerate(self._options.items()):
             list.append(
-                (pyglet.text.Label(("> " + option[0].lower()) if index is self.current_option else option[0].lower(),
+                (pyglet.text.Label(("> " + option) if index is self.current_option else option,
                         **text_options,
-                        x=160, y= ((265 + (len(self._options[0]) * 35)) - index * 35)
+                        x=160, y= ((265 + (len(self._options) * 35)) - index * 35)
                 ))
             )
 
         return list
 
     def submit(self):
-        self._options[self.current_option][1]()
+        list(self._options.values())[self.current_option]()
 
 
-menu = Menu(["resume", board.resume_game], ["restart", board.init_game], ["options"])
+menu = Menu(resume=board.resume_game, restart=board.init_game,options=board.resume_game)
 
 
 @window.event
