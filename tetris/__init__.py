@@ -197,19 +197,7 @@ class Block:
 
 class Board:
     def __init__(self):
-        self.current_block = None
-        self.placed_blocks = [[None for x in range(width + 1)] for x in range(heigth + 1)]
-        self.blocks = []
-        self.score = 0
-        self.level = 0
-        self.cleared_lines = 0
-
-        self.is_paused = False
-
-        self.queue = []
-        self.holder = None
-        self.stashed_block = None
-        self.next = None
+        self.init_game()
         self.spawn_block()
 
     # draws the board from grid 🤯
@@ -396,6 +384,22 @@ class Board:
     """
     def pause_game(self):
         self.is_paused = not self.is_paused
+
+    def init_game(self):
+        self.current_block = None
+        self.placed_blocks = [[None for x in range(width + 1)] for x in range(heigth + 1)]
+        self.blocks = []
+        self.score = 0
+        self.level = 0
+        self.cleared_lines = 0
+
+        self.is_paused = False
+
+        self.queue = []
+        self.holder = None
+        self.stashed_block = None
+        self.next = None
+        self.spawn_block()
 
 def div_vec(vec: tuple[int, ...], scalar: int):
     return *map(lambda x: x // scalar, vec),

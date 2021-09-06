@@ -5,7 +5,7 @@ from pyglet.gl import *
 from pyglet import font, shapes
 from pyglet.graphics import draw
 
-from .import Board, bg_color
+from .import Board, bg_color, width, heigth
 from pathlib import Path
 
 background = pyglet.graphics.OrderedGroup(0)
@@ -27,7 +27,7 @@ def div_vec(vec: tuple[int, ...], scalar: int):
 
 def restart_game():
     global board
-
+    
     for block in board.next.blocks:
         block.delete()
     if board.holder:
@@ -62,11 +62,9 @@ class Menu:
 
     def submit(self):
         self._options[self.current_option][1]()
-    
 
 
-
-menu = Menu(["resume", board.resume_game], ["restart", restart_game], ["options"])
+menu = Menu(["resume", board.resume_game], ["restart", board.init_game], ["options"])
 
 
 @window.event
