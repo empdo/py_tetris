@@ -10,7 +10,7 @@ from pyglet import font, shapes, media, resource
 from pyglet.media import load, synthesis, SourceGroup
 from pyglet.graphics import draw
 
-from .import Board, bg_color, width, heigth
+from .import Board
 from pathlib import Path
 
 background = pyglet.graphics.OrderedGroup(0)
@@ -20,14 +20,8 @@ window = pyglet.window.Window(485, 600, "tetris")
 #font.add_file("font.ttf")
 #k_font = pyglet.font.load("Karmatic Arcade")
 
-rotate_sound = pyglet.media.load("/home/emil/dev/py_tetris/sounds/block-rotate.mp3", streaming=False)
-hard_drop_sound = pyglet.media.load("/home/emil/dev/py_tetris/sounds/force-hit.mp3", streaming=False)
+sound = pyglet.media.load(str(Path("music.mp3").absolute()), streaming=False)
 
-sound = pyglet.media.load("/home/emil/dev/py_tetris/sounds/music.mp3", streaming=False)
-
-BACKGROUND_OPTIONS = (sound)
-
-player = pyglet.media.Player()
 bg_sound = pyglet.media.Player()
 
 
@@ -93,14 +87,10 @@ def on_key_press(symbol, modifiers):
             move_right(None)
         elif symbol == key.UP:
             board.piece_rotate()
-            player.queue(rotate_sound)
-            player.volume = 1
-            player.play()
         elif symbol == key.DOWN:
             drop_time = 0.05
         elif symbol == key.SPACE:
             board.hard_drop_block()
-            hard_drop_sound.play()
         elif symbol == key.C:
             board.hold_block()
         elif symbol == key.P:

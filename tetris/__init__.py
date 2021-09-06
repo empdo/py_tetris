@@ -16,14 +16,14 @@ batch = Batch()
 # VARIABLES
 block_size = 32
 ui_offset = 50
-bg_color = (40, 0, 41)
+bg_sound = (40, 0, 41)
 ghost_block_color = (63, 46, 64)
 
 scores = (0, 100, 200, 300, 800)
 
 width, heigth = 9, 20
 
-default_grid = [[bg_color for x in range(
+default_grid = [[bg_sound for x in range(
     width + 1)] for x in range(heigth + 1)]
 
 
@@ -206,7 +206,7 @@ class Board:
     def draw_board(self):
         for y, row in enumerate(self.placed_blocks):
             for x, block_color in enumerate(row):
-                color = block_color if block_color != None else bg_color
+                color = block_color if block_color != None else bg_sound
 
                 self.blocks.append(
                     self.create_shape([y, x], color)
