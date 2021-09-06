@@ -30,22 +30,27 @@ class Menu:
     @property
     def options(self):
         bg = shapes.BorderedRectangle(
-        60, 100, 200, 400, 8,(100, 0, 100), div_vec((0,0,0),1))
-        bg.opacity = 230
+        0, 0, 320, 600, 8,(0,0,0), div_vec((0,0,0),1))
+        bg.opacity = 150
         list = [bg]
 
         text_options = {"font_name": "Source Code pro", "font_size": 18, "color":(255, 255, 255, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
     
         for index, option in enumerate(self._options):
             list.append(
-                (pyglet.text.Label(option.upper() if index is self.current_option else option.lower(),
+                (pyglet.text.Label(("> " + option.lower()) if index is self.current_option else option.lower(),
                         **text_options,
-                        #underline = (0,0,0, 255),
                         x=160, y= ((265 + (len(self._options) * 35)) - index * 35)
                 ))
             )
 
         return list
+
+    def submit(self):
+        if(self._options[self.current_option] == "resume"):
+            board.is_paused = False
+        else: 
+            pass
 
 
     
@@ -78,6 +83,8 @@ def on_key_press(symbol, modifiers):
         menu.current_option = (menu.current_option -1 ) % (len(menu.options) -1)
     elif symbol == key.DOWN:
         menu.current_option = (menu.current_option +1 ) % (len(menu.options) -1)
+    elif symbol == key.RETURN:
+        menu.submit()
 
 @window.event
 def on_key_release(symbol, modifiers):
