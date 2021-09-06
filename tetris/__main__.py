@@ -4,15 +4,15 @@ from pyglet.window import key
 from pyglet.gl import *
 from pyglet import font, shapes, resource
 
-from .import Board, placed_blocks
+from .import Board, placed_blocks, bg_color
 from pathlib import Path
 
 background = pyglet.graphics.OrderedGroup(0)
 window = pyglet.window.Window(485, 600, "tetris")
 
-font.add_directory((Path(__file__).parent)/"")
-font.add_file("font.ttf")
-k_font = pyglet.font.load("Karmatic Arcade")
+#font.add_directory((Path(__file__).parent)/"")
+#font.add_file("font.ttf")
+#k_font = pyglet.font.load("Karmatic Arcade")
 
 
 drop_time = 0.7
@@ -29,10 +29,12 @@ class Menu:
 
     @property
     def options(self):
-        list = [shapes.BorderedRectangle(
-        60, 100, 200, 400, 8,(200, 200, 200), div_vec((0,0,0),1))]
+        bg = shapes.BorderedRectangle(
+        60, 100, 200, 400, 8,(100, 0, 100), div_vec((0,0,0),1))
+        bg.opacity = 230
+        list = [bg]
 
-        text_options = {"font_name": k_font, "font_size": 18, "color":(0,0,0, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
+        text_options = {"font_name": "Source Code pro", "font_size": 18, "color":(255, 255, 255, 255), "anchor_x":'center', "anchor_y":'center', "bold":True}
     
         for index, option in enumerate(self._options):
             list.append(
@@ -114,10 +116,6 @@ def on_draw():
             x=402.5, y=540,
             **text_options        
             )).draw()
-    (pyglet.text.Label("NEXT",
-            x=403.5, y=539,
-            **text_options       
-            )).draw()
 
     pyglet.shapes.BorderedRectangle(
     340, 250, 125, 100, 8,(41, 0, 40), div_vec((41, 0, 40), 2) ).draw()
@@ -148,8 +146,9 @@ def on_draw():
     board.update_board()
 
     if board.is_paused:
-        shapes.BorderedRectangle(
-        60, 100, 200, 400, 8,(200, 200, 200), div_vec((0,0,0),1)).draw()
+        #bg = shapes.BorderedRectangle(
+        #60, 100, 200, 400, 8,(200, 200, 200), div_vec((0,0,0),1))
+        #bg.opacity = 170
 
         for option in menu.options:
             option.draw()

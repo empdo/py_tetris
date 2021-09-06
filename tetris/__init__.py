@@ -3,7 +3,7 @@ from .shapes import *
 import copy
 import random
 from pprint import pprint
-import numpy as np
+#import numpy as np
 
 import pyglet
 from pyglet.graphics import draw, Batch
